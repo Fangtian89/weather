@@ -38,7 +38,6 @@ class PlaceAdapter(private val fragment:PlaceFragment,private val placeList:List
             fragment.startActivity(intent)
             fragment.activity?.finish()
         }
-
         return holder
     }
 
