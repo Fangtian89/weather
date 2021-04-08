@@ -69,7 +69,7 @@ class PlaceFragment:Fragment() {
 
             viewModel.placeLiveData.observe(viewLifecycleOwner, Observer { result ->
                 val places =
-                    result.getOrNull()                                                           //getOrNull() 即非null 返回正差值，为null 时返回 null
+                    result.getOrNull()                                                              //getOrNull() 即非null 返回正差值，为null 时返回 null
                 if (places != null) {
                     Log.d(TAG, "onActivityCreated_3: " + activity)
                     recyclerView.visibility = View.VISIBLE

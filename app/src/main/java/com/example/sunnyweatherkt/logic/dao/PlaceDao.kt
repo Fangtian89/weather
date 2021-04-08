@@ -12,18 +12,15 @@ object PlaceDao {                                                               
     private fun sharePreferences()=MyApplication.context.getSharedPreferences("sunny_weather",Context.MODE_PRIVATE)
 
     fun savePlace(place: PlaceResponsing.Place) {
-        sharePreferences().edit() {
+            sharePreferences().edit() {
             putString("place", Gson().toJson(place))
         }
     }
-    fun getSavedPlace(): PlaceResponsing.Place {
+    fun getSavedPlace():PlaceResponsing.Place{
         val placeJson= sharePreferences().getString("place","")
         return Gson().fromJson(placeJson, PlaceResponsing.Place::class.java)
     }
 
-    fun isPlaceSaved():Boolean{
-        return sharePreferences().contains("place")
-    }
-
+    fun isPlaceSaved()= sharePreferences().contains("place")
 
 }
