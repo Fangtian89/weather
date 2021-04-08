@@ -49,7 +49,7 @@ object Repository {                                                             
                         Result.success(weatherResult)                                                       //if 最后一行表示返回
                     } else {
                         Result.failure(RuntimeException("realtime response status is ${getResultRealtime.status} " +     //else 最后一行表示返回
-                                "daily response status is ${getResultdDaily.status}"))
+                                "daily response status is ${getResultdDaily.status}!!"))
                     }
                 }
             }catch (e:Exception){
