@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.sunnyweatherkt.R
 import com.example.sunnyweatherkt.logic.model.PlaceResponsing
 import com.example.sunnyweatherkt.ui.weather.WeatherActivity
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.place_item.view.*
 
 class PlaceAdapter(private val fragment:PlaceFragment,private val placeList:List<PlaceResponsing.Place>) : RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
@@ -32,6 +33,7 @@ class PlaceAdapter(private val fragment:PlaceFragment,private val placeList:List
                 putExtra("location_lng",place.location.lng)
                 putExtra("location_lat",place.location.lat)
                 putExtra("place_name",place.name)
+                putExtra("place",Gson().toJson(place))
             }
 
             fragment.viewModel.savedPlace(place)                                                    //存储选中的城市

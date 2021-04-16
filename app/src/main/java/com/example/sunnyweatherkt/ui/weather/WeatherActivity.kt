@@ -1,6 +1,7 @@
 package com.example.sunnyweatherkt.ui.weather
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -15,10 +16,17 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.sunnyweatherkt.MyApplication
 import com.example.sunnyweatherkt.R
 import com.example.sunnyweatherkt.Util.showToastLg
+import com.example.sunnyweatherkt.Util.startActivity
+import com.example.sunnyweatherkt.logic.Repository
+import com.example.sunnyweatherkt.logic.model.PlaceResponsing
 import com.example.sunnyweatherkt.logic.model.Weather
 import com.example.sunnyweatherkt.logic.model.getSky
+import com.example.sunnyweatherkt.ui.favourite.FavouriteActivity
+import com.example.sunnyweatherkt.ui.favourite.FavouriteFragment
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_weather.*
 import kotlinx.android.synthetic.main.forecast.*
 import kotlinx.android.synthetic.main.forecast_item.*
@@ -74,9 +82,7 @@ class WeatherActivity : AppCompatActivity() {
             refreshWeather()
         }
 
-        nav_button.setOnClickListener{                                                                  // navigation 键
-            drawerLayout.openDrawer(GravityCompat.START)                                                //打开drawerLayout,打开placeFragment,实际上placeFragment 早在开始 weatherActivity是已经静态加载
-        }
+
 
         drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {                           //drawerLayout 监听器 ,新知识!!!
 
@@ -88,6 +94,20 @@ class WeatherActivity : AppCompatActivity() {
             }
             override fun onDrawerStateChanged(newState: Int) {}
         })
+
+        fab.setOnClickListener {                                                                        //保存选中的地点选项
+            val placeInGson=Gson().fromJson(intent.getStringExtra("place"),PlaceResponsing.Place::class.java)
+            Repository.saveFavouritePlace(placeInGson)
+        }
+        nav_button.setOnClickListener{                                                                  // navigation 键
+            drawerLayout.openDrawer(GravityCompat.START)                                                //打开drawerLayout,打开placeFragment,实际上placeFragment 早在开始 weatherActivity是已经静态加载
+        }
+
+        nav_list.setOnClickListener{
+            //val fragment=FavouriteFragment()                                                                                            //打开保存的地址和天气
+            //supportFragmentManager.beginTransaction().add(R.id.drawerLayout,FavouriteFragment::class.java.newInstance()).addToBackStack(null).commit()
+            startActivity<FavouriteActivity>(this){}
+        }
     }
 
     fun refreshWeather(){
@@ -105,8 +125,9 @@ class WeatherActivity : AppCompatActivity() {
         val pm25=realTimeWeather.air_quality.aqi.chn.toString()
         currentAQI.text=pm25
 
-
         nowLayout.setBackgroundResource(getSky(realTimeWeather.skycon).bg)
+
+
         //nowLayout.setBackgroundResource(R.mipmap.bg_clear_day)
 //---------------------------------------------dailyWeather-----------------------------------------
 
@@ -140,5 +161,11 @@ class WeatherActivity : AppCompatActivity() {
         carWashingText.text=lifeIndex.carWashing[0].desc
         weatherLayout.visibility= View.VISIBLE
     }
+
+//    inline fun <reified T>startActivity(context: Context,block: Intent.()->Unit){
+//        val intent=Intent(context,T::class.java)
+//        intent.block()
+//        context.startActivity(intent)
+//    }
 
 }

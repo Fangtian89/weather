@@ -16,6 +16,7 @@ import com.example.sunnyweatherkt.MyApplication
 import com.example.sunnyweatherkt.R
 import com.example.sunnyweatherkt.Util.showToastSt
 import com.example.sunnyweatherkt.ui.weather.WeatherActivity
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_place.*
 
 class PlaceFragment:Fragment() {
@@ -40,6 +41,7 @@ class PlaceFragment:Fragment() {
                 putExtra("location_lng",place.location.lng)
                 putExtra("location_lat",place.location.lat)
                 putExtra("place_name",place.name)
+                putExtra("place",Gson().toJson(place))
             }
             startActivity(intent)
             activity?.finish()                                                                      //关掉之前activity 或 fragment

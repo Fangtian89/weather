@@ -1,10 +1,17 @@
 package com.example.sunnyweatherkt.Util
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import com.example.sunnyweatherkt.MyApplication
 
-val k=5
+inline fun <reified T>startActivity(context: Context, block: Intent.()->Unit){
+    val intent= Intent(context,T::class.java)
+    intent.block()
+    context.startActivity(intent)
+}
+
 fun String.showToastSt(duration:Int=Toast.LENGTH_SHORT){
     Toast.makeText(MyApplication.context,this,duration).show()
 }

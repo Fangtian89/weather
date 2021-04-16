@@ -15,6 +15,7 @@ object PlaceDao {                                                               
             sharePreferences().edit() {
             putString("place", Gson().toJson(place))
         }
+
     }
     fun getSavedPlace():PlaceResponsing.Place{
         val placeJson= sharePreferences().getString("place","")

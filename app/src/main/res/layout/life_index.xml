@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="20dp"
-            android:text="生活指数"
+            android:text="Life Index"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp"
             android:layout_marginLeft="15dp" />
@@ -54,7 +54,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="感冒"/>
+                        android:text="Cold"/>
 
                     <TextView
                         android:id="@+id/coldRiskText"
@@ -95,7 +95,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="穿衣"/>
+                        android:text="Clothing"/>
 
                     <TextView
                         android:id="@+id/dressingText"
@@ -144,7 +144,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="实时紫外线"/>
+                        android:text="Ultrviolet"/>
 
                     <TextView
                         android:id="@+id/ultravioletText"
@@ -186,7 +186,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="洗车"/>
+                        android:text="Car Washing"/>
 
                     <TextView
                         android:id="@+id/carWashingText"

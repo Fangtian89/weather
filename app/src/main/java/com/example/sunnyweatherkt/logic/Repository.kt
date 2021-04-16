@@ -3,12 +3,15 @@ package com.example.sunnyweatherkt.logic
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import com.example.sunnyweatherkt.logic.dao.FavouriteDao
 import com.example.sunnyweatherkt.logic.dao.PlaceDao
 //import com.example.sunnyweatherkt.logic.model.PlaceResponse
 import com.example.sunnyweatherkt.logic.model.PlaceResponsing
+import com.example.sunnyweatherkt.logic.model.RealTimeResponse
 import com.example.sunnyweatherkt.logic.model.Weather
 import com.example.sunnyweatherkt.logic.network.SunnyWeatherNetwork
 import com.example.sunnyweatherkt.logic.network.WeatherService
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.async
@@ -58,6 +61,29 @@ object Repository {                                                             
             emit(result)
     }
 
+
+    fun favouriteWeahterRefresh(placelist:MutableMap<String,PlaceResponsing.Place>)= liveData(Dispatchers.IO) {
+        var  maps:MutableMap<String,RealTimeResponse> = mutableMapOf()
+        val result=try{
+            coroutineScope {
+                placelist.forEach(){
+                    val place= it.value
+                    val realTime=async {
+                        SunnyWeatherNetwork.getRealTimeWeather(place.location.lng,place.location.lat) }.await()
+                        if("ok" == realTime.status){
+                            maps.put(it.key,realTime)
+                    }else{
+                        Result.failure<MutableMap<String,RealTimeResponse>>(RuntimeException("realtime response status is ${realTime.status} "))
+                    }
+                }
+                Result.success(maps)
+            }
+        }catch (e:Exception){
+            Result.failure<MutableMap<String,RealTimeResponse>>(e)
+        }
+        emit(result)
+    }
+
 //    private fun<T> fire(context:CoroutineContext,block:suspend()->Result<T>):LiveData<Result<T>>{
 //        return liveData(context) {
 //            val result=try{
@@ -76,7 +102,7 @@ object Repository {                                                             
 //             } catch (e: Exception) {
 //                 Result.failure<T>(e)
 //             }
-//            emit(result)
+//            emit(result<*>)
 //
 //        }
 
@@ -89,4 +115,20 @@ object Repository {                                                             
 
     fun isPlaceSaved():Boolean=PlaceDao.isPlaceSaved()
 
+
+    fun saveFavouritePlace(place:PlaceResponsing.Place){
+        FavouriteDao.saveFavouritePlace(place)
+    }
+
+    fun readFavouritePlace()=FavouriteDao.readFavouritePlace()
+
+    private fun Gson.fromJson(it1: Any, java: Class<PlaceResponsing.Place>) {
+
+    }
+
 }
+
+
+
+
+
