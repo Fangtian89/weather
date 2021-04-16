@@ -56,7 +56,7 @@ class FavouriteFragment: Fragment() {
                     //displayFavourite(weatherResult)
                     val layoutManager=LinearLayoutManager(activity)
                     recyclerView.layoutManager=layoutManager
-                    adapter=FavouriteAdapter(weatherResult)
+                    adapter=FavouriteAdapter(this,weatherResult)
                     recyclerView.adapter=adapter
                 }
         }

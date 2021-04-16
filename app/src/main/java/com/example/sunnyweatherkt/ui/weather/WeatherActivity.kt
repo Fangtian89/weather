@@ -107,6 +107,7 @@ class WeatherActivity : AppCompatActivity() {
             //val fragment=FavouriteFragment()                                                                                            //打开保存的地址和天气
             //supportFragmentManager.beginTransaction().add(R.id.drawerLayout,FavouriteFragment::class.java.newInstance()).addToBackStack(null).commit()
             startActivity<FavouriteActivity>(this){}
+
         }
     }
 

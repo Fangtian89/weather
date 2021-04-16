@@ -63,7 +63,7 @@ object Repository {                                                             
 
 
     fun favouriteWeahterRefresh(placelist:MutableMap<String,PlaceResponsing.Place>)= liveData(Dispatchers.IO) {
-        var  maps:MutableMap<String,RealTimeResponse> = mutableMapOf()
+        var  maps:MutableMap<PlaceResponsing.Place,RealTimeResponse> = mutableMapOf()
         val result=try{
             coroutineScope {
                 placelist.forEach(){
@@ -71,15 +71,16 @@ object Repository {                                                             
                     val realTime=async {
                         SunnyWeatherNetwork.getRealTimeWeather(place.location.lng,place.location.lat) }.await()
                         if("ok" == realTime.status){
-                            maps.put(it.key,realTime)
+                            //maps.put(it.key,realTime)
+                            maps.put(place,realTime)
                     }else{
-                        Result.failure<MutableMap<String,RealTimeResponse>>(RuntimeException("realtime response status is ${realTime.status} "))
+                        Result.failure<MutableMap<PlaceResponsing.Place,RealTimeResponse>>(RuntimeException("realtime response status is ${realTime.status} "))
                     }
                 }
                 Result.success(maps)
             }
         }catch (e:Exception){
-            Result.failure<MutableMap<String,RealTimeResponse>>(e)
+            Result.failure<MutableMap<PlaceResponsing.Place,RealTimeResponse>>(e)
         }
         emit(result)
     }
