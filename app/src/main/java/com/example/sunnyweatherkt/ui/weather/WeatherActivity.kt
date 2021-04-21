@@ -33,6 +33,8 @@ import kotlinx.android.synthetic.main.forecast_item.*
 import kotlinx.android.synthetic.main.life_index.*
 import kotlinx.android.synthetic.main.now.*
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class WeatherActivity : AppCompatActivity() {
@@ -42,6 +44,7 @@ class WeatherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
+         lateinit var weatherResult:Weather
 
         //------------------------------------------------------------------------------------------
         val decorView=window.decorView                                                                              //状态栏和背景融合
@@ -66,7 +69,8 @@ class WeatherActivity : AppCompatActivity() {
 
         weatherViewModel.weatherLiveData.observe(this, Observer {                               //观察livedata 变化
             result ->
-            val weatherResult=result.getOrNull()                                                        //getOrNull 一种防空方法，若为空则给 0
+            weatherResult=
+                result.getOrNull()!!                                                        //getOrNull 一种防空方法，若为空则给 0
             if(weatherResult!=null){
                 showWeatherInfo(weatherResult)
             }else{
@@ -95,9 +99,9 @@ class WeatherActivity : AppCompatActivity() {
             override fun onDrawerStateChanged(newState: Int) {}
         })
 
-        fab.setOnClickListener {                                                                        //保存选中的地点选项
-            val placeInGson=Gson().fromJson(intent.getStringExtra("place"),PlaceResponsing.Place::class.java)
-            Repository.saveFavouritePlace(placeInGson)
+        fab.setOnClickListener {
+            val placeInGson=Gson().fromJson(intent.getStringExtra("place"),PlaceResponsing.Place::class.java)       //保存选中的地点,及天气选项
+            Repository.saveFavouritePlace(placeInGson,weatherResult)
         }
         nav_button.setOnClickListener{                                                                  // navigation 键
             drawerLayout.openDrawer(GravityCompat.START)                                                //打开drawerLayout,打开placeFragment,实际上placeFragment 早在开始 weatherActivity是已经静态加载
@@ -116,6 +120,8 @@ class WeatherActivity : AppCompatActivity() {
         swipeRefresh.isRefreshing=true                                                                  //显示进度条
     }
 
+
+
     fun showWeatherInfo(result:Weather){                                                                //展示weather
         placeName.text=weatherViewModel.placeName
         val realTimeWeather=result.realTime                                                         //取结果，分配
@@ -125,6 +131,11 @@ class WeatherActivity : AppCompatActivity() {
         currentSky.text=realTimeWeather.skycon
         val pm25=realTimeWeather.air_quality.aqi.chn.toString()
         currentAQI.text=pm25
+
+        val date=Calendar.getInstance().time
+        val formatter=SimpleDateFormat("HH:mm")
+        val formatted=formatter.format(date)
+        upateTime.text="last update: $formatted"
 
         nowLayout.setBackgroundResource(getSky(realTimeWeather.skycon).bg)
 

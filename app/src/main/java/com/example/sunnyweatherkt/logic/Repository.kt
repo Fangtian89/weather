@@ -62,17 +62,17 @@ object Repository {                                                             
     }
 
 
-    fun favouriteWeahterRefresh(placelist:MutableMap<String,PlaceResponsing.Place>)= liveData(Dispatchers.IO) {
+    fun favouriteWeahterRefresh(placelist:ArrayList<PlaceResponsing.Place>)= liveData(Dispatchers.IO) {
         var  maps:MutableMap<PlaceResponsing.Place,RealTimeResponse> = mutableMapOf()
         val result=try{
             coroutineScope {
                 placelist.forEach(){
-                    val place= it.value
+                    val place= it
                     val realTime=async {
                         SunnyWeatherNetwork.getRealTimeWeather(place.location.lng,place.location.lat) }.await()
-                        if("ok" == realTime.status){
-                            //maps.put(it.key,realTime)
-                            maps.put(place,realTime)
+                    if("ok" == realTime.status){
+                        //maps.put(it.key,realTime)
+                        maps.put(place,realTime)
                     }else{
                         Result.failure<MutableMap<PlaceResponsing.Place,RealTimeResponse>>(RuntimeException("realtime response status is ${realTime.status} "))
                     }
@@ -117,8 +117,8 @@ object Repository {                                                             
     fun isPlaceSaved():Boolean=PlaceDao.isPlaceSaved()
 
 
-    fun saveFavouritePlace(place:PlaceResponsing.Place){
-        FavouriteDao.saveFavouritePlace(place)
+    fun saveFavouritePlace(place:PlaceResponsing.Place,weather:Weather){
+        FavouriteDao.saveFavouritePlace(place,weather)
     }
 
     fun readFavouritePlace()=FavouriteDao.readFavouritePlace()

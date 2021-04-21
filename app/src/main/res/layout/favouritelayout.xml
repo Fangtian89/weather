@@ -18,9 +18,14 @@
 <!--    </LinearLayout>-->
 
     <TextView
+        android:id="@+id/updateTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="20dp"
+        android:textSize="20sp"
+        android:textColor="#000"
         android:text="date and time"/>
 
     <androidx.recyclerview.widget.RecyclerView

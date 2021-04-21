@@ -1,6 +1,7 @@
 package com.example.sunnyweatherkt.logic.network
 
 import android.util.Log
+import com.example.sunnyweatherkt.logic.model.Weather
 import kotlinx.coroutines.Dispatchers
 import retrofit2.Call
 import retrofit2.Callback

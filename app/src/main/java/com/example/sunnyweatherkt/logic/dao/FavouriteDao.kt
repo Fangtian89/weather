@@ -6,14 +6,16 @@ import androidx.core.content.edit
 import com.example.sunnyweatherkt.MyApplication
 import com.example.sunnyweatherkt.logic.Repository
 import com.example.sunnyweatherkt.logic.model.PlaceResponsing
+import com.example.sunnyweatherkt.logic.model.RealTimeResponse
+import com.example.sunnyweatherkt.logic.model.Weather
 import com.google.gson.Gson
 
 object FavouriteDao {
     fun sharedPreference()=MyApplication.context.getSharedPreferences("Favourite",Context.MODE_PRIVATE)
 
-    fun saveFavouritePlace(place: PlaceResponsing.Place){
+    fun saveFavouritePlace(place: PlaceResponsing.Place,weather:Weather){
         sharedPreference().edit() {
-            putString(place.name,Gson().toJson(place))
+            putString(Gson().toJson(place),Gson().toJson(weather))
         }
     }
 
@@ -24,5 +26,7 @@ object FavouriteDao {
         result=sharedPreference().all as MutableMap<String, String>
         return result
     }
+
+
 }
 

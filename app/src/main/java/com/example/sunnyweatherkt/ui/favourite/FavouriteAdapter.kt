@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.Data
 import com.example.sunnyweatherkt.R
 import com.example.sunnyweatherkt.Util.startActivity
 import com.example.sunnyweatherkt.logic.model.PlaceResponsing
@@ -15,7 +16,7 @@ import com.example.sunnyweatherkt.logic.model.getSky
 import com.example.sunnyweatherkt.ui.weather.WeatherActivity
 import com.google.gson.Gson
 
-class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<PlaceResponsing.Place,RealTimeResponse>):RecyclerView.Adapter<FavouriteAdapter.Holder>() {
+class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<PlaceResponsing.Place,RealTimeResponse.RealTime>):RecyclerView.Adapter<FavouriteAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):Holder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.favourite_item,parent,false)
@@ -23,14 +24,16 @@ class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<Pla
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
+
+
             val list = ArrayList<PlaceResponsing.Place>(weather.keys)
             //val position=holder.adapterPosition
             val name=list[position].name
 
             holder.placeName.text=name
-            holder.temperatureInfo.text= weather[list[position]]!!.result.realtime.temperature.toString()+"°C"      //通过key 得到 value
-            holder.skyInfo.text= weather[list[position]]!!!!.result.realtime.skycon
-            holder.skyIcon.setImageResource(getSky(weather[list[position]]!!.result.realtime.skycon).icon)
+            holder.temperatureInfo.text= weather[list[position]]!!.temperature.toString()+"°C"      //通过key 得到 value
+            holder.skyInfo.text= weather[list[position]]!!!!.skycon
+            holder.skyIcon.setImageResource(getSky(weather[list[position]]!!.skycon).icon)
 
             holder.itemView.setOnClickListener{
                 val clickPosition=holder.adapterPosition
@@ -56,3 +59,5 @@ class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<Pla
         val temperatureInfo=view.findViewById(R.id.temperatureInfo)as TextView
     }
 }
+
+
