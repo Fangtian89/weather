@@ -15,7 +15,7 @@ class WeatherViewModel:ViewModel() {
     var placeName=""
 
     val weatherLiveData=Transformations.switchMap(locationLiveData){
-        location->Repository.refreshWeather(location.lng,location.lat)
+        location->Repository.refreshWeather(location.lng,location.lat)                              //从外部获取的LiveData 实例
     }
 
     fun refreshWeather(lng:String,lat:String){

@@ -26,7 +26,5 @@ object FavouriteDao {
         result=sharedPreference().all as MutableMap<String, String>
         return result
     }
-
-
 }
 

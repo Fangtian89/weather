@@ -62,25 +62,25 @@ object Repository {                                                             
     }
 
 
-    fun favouriteWeahterRefresh(placelist:ArrayList<PlaceResponsing.Place>)= liveData(Dispatchers.IO) {
-        var  maps:MutableMap<PlaceResponsing.Place,RealTimeResponse> = mutableMapOf()
-        val result=try{
+    fun favouriteWeatherRefresh(lng:String,lat:String)= liveData(Dispatchers.IO) {
+        val result=try {
             coroutineScope {
-                placelist.forEach(){
-                    val place= it
-                    val realTime=async {
-                        SunnyWeatherNetwork.getRealTimeWeather(place.location.lng,place.location.lat) }.await()
-                    if("ok" == realTime.status){
-                        //maps.put(it.key,realTime)
-                        maps.put(place,realTime)
-                    }else{
-                        Result.failure<MutableMap<PlaceResponsing.Place,RealTimeResponse>>(RuntimeException("realtime response status is ${realTime.status} "))
-                    }
+                val deferredRealtime = async { SunnyWeatherNetwork.getRealTimeWeather(lng, lat) }           //因为async 需要 协程区域 coroutineScope
+                val deferredDaily = async { SunnyWeatherNetwork.getDailyWeather(lng, lat) }
+                //同时获取结果
+                val getResultdDaily = deferredDaily.await()
+                val getResultRealtime = deferredRealtime.await()
+
+                if (getResultdDaily.status .equals("ok") && getResultRealtime.status .equals("ok")) {
+                    val weatherResult = Weather(getResultRealtime.result.realtime, getResultdDaily.result.daily)        //把2个结果都放在 weather,作为一个结果
+                    Result.success(weatherResult)                                                       //if 最后一行表示返回
+                } else {
+                    Result.failure(RuntimeException("realtime response status is ${getResultRealtime.status} " +     //else 最后一行表示返回
+                            "daily response status is ${getResultdDaily.status}!!"))
                 }
-                Result.success(maps)
             }
         }catch (e:Exception){
-            Result.failure<MutableMap<PlaceResponsing.Place,RealTimeResponse>>(e)
+            Result.failure<Weather>(e)
         }
         emit(result)
     }
@@ -123,9 +123,6 @@ object Repository {                                                             
 
     fun readFavouritePlace()=FavouriteDao.readFavouritePlace()
 
-    private fun Gson.fromJson(it1: Any, java: Class<PlaceResponsing.Place>) {
-
-    }
 
 }
 

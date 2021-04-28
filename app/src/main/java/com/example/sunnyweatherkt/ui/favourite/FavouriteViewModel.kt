@@ -1,5 +1,6 @@
 package com.example.sunnyweatherkt.ui.favourite
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -11,15 +12,17 @@ import com.example.sunnyweatherkt.logic.model.Weather
 
 class FavouriteViewModel:ViewModel() {
 
-    private val locationLiveData=MutableLiveData<ArrayList<PlaceResponsing.Place>>()
-
-    val weatherLiveData=Transformations.switchMap(locationLiveData){placelist->
-        Repository.favouriteWeahterRefresh(placelist)
+    private val locationLiveData=MutableLiveData<PlaceResponsing.Location>()
+    val TAG="WeatherResult"
+    val favouriteWeatherLiveData=Transformations.switchMap(locationLiveData){location->
+        Repository.favouriteWeatherRefresh(location.lng,location.lat)
     }
 
 
-    fun refreshFavouriteWeather(placelist:ArrayList<PlaceResponsing.Place>){
-        locationLiveData.value=placelist
+    fun refreshFavouriteWeather(lng:String,lat:String){
+        locationLiveData.postValue(PlaceResponsing.Location(lng,lat))
+        Log.d(TAG, "refreshFavouriteWeather: "+locationLiveData+" "+lng+" "+lat+" "+Thread.currentThread().name)
+
     }
 
 
@@ -29,5 +32,4 @@ class FavouriteViewModel:ViewModel() {
 
     fun readFavouritePlace()=Repository.readFavouritePlace()
 
-    fun isPlaceSaved()=Repository.isPlaceSaved()
 }

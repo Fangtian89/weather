@@ -62,12 +62,15 @@ class FavouriteFragment: Fragment() {
                 weatherResult[placeInGson] = realTimeInGson
             }
 
-                val layoutManager=LinearLayoutManager(activity)                                     //展示到RecyclerView
-                recyclerView.layoutManager=layoutManager
+            val layoutManager=LinearLayoutManager(activity)                                         //展示到RecyclerView
+            recyclerView.layoutManager=layoutManager
+            if (weatherResult!=null){                                                               //确定 weatherResult 绝不为空，在Adapter 里 才敢保证用 !!
                 adapter=FavouriteAdapter(this,weatherResult)
                 recyclerView.adapter=adapter
-    }
 
+            }
+            adapter.notifyDataSetChanged()
+    }
 }
 
 

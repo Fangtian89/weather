@@ -25,32 +25,28 @@ class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<Pla
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
 
+        val list =ArrayList<PlaceResponsing.Place>(weather.keys)                                    //把weather 里的 keys 都拿出来，放入一个Arraylist 中
+        val name=list[position].name
+        holder.placeName.text=name
+        holder.temperatureInfo.text= weather[list[position]]!!.temperature.toString()+"°C"          //通过key 得到 value，  因为在FavouriteFrag 里面判断了weather 不为null, 所以敢硬气的用 !!
+        holder.skyInfo.text= weather[list[position]]!!.skycon
+        holder.skyIcon.setImageResource(getSky(weather[list[position]]!!.skycon).icon)
 
-            val list = ArrayList<PlaceResponsing.Place>(weather.keys)
-            //val position=holder.adapterPosition
-            val name=list[position].name
-
-            holder.placeName.text=name
-            holder.temperatureInfo.text= weather[list[position]]!!.temperature.toString()+"°C"      //通过key 得到 value
-            holder.skyInfo.text= weather[list[position]]!!!!.skycon
-            holder.skyIcon.setImageResource(getSky(weather[list[position]]!!.skycon).icon)
-
-            holder.itemView.setOnClickListener{
-                val clickPosition=holder.adapterPosition
-                val lng=list[clickPosition].location.lng
-                val lat=list[clickPosition].location.lat
-                val name=list[clickPosition].name
-                startActivity<WeatherActivity>(fragment.context!!){
-                    putExtra("location_lng",lng)
-                    putExtra("location_lat",lat)
-                    putExtra("place_name",name)
-                    putExtra("place", Gson().toJson(list[clickPosition]))
-                }
-
+        holder.itemView.setOnClickListener{
+            val clickPosition=holder.adapterPosition
+            val lng=list[clickPosition].location.lng
+            val lat=list[clickPosition].location.lat
+            val name=list[clickPosition].name
+            startActivity<WeatherActivity>(fragment.context!!){
+                putExtra("location_lng",lng)
+                putExtra("location_lat",lat)
+                putExtra("place_name",name)
+                putExtra("place", Gson().toJson(list[clickPosition]))
             }
+        }
     }
 
-    override fun getItemCount()=weather.size
+    override fun getItemCount()=weather?.size
 
     inner class Holder(view:View):RecyclerView.ViewHolder(view){
         val placeName=view.findViewById(R.id.placeInfo) as TextView

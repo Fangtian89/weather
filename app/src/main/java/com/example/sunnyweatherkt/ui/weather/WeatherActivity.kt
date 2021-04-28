@@ -45,7 +45,7 @@ class WeatherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
          lateinit var weatherResult:Weather
-
+         
         //------------------------------------------------------------------------------------------
         val decorView=window.decorView                                                                              //状态栏和背景融合
         decorView.systemUiVisibility=View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -67,7 +67,7 @@ class WeatherActivity : AppCompatActivity() {
 
         weatherViewModel.refreshWeather(weatherViewModel.locationLng,weatherViewModel.locationLat)      //触发viewModel内部变化
 
-        weatherViewModel.weatherLiveData.observe(this, Observer {                               //观察livedata 变化
+        weatherViewModel.weatherLiveData.observe(this,Observer{                               //观察livedata 变化
             result ->
             weatherResult=
                 result.getOrNull()!!                                                        //getOrNull 一种防空方法，若为空则给 0
