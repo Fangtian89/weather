@@ -44,18 +44,34 @@ class MainActivity : AppCompatActivity(){
         //        locationManager=applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager                    //做一个 locationmanager 对象
         //可以返回都有哪些provider,或像下面直接指定 , val provider=locationManager.getProviders(true)
 
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-        } else {
-            return
-        }
+//        if (ContextCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            ActivityCompat.requestPermissions(
+//                this,
+//                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+//        } else {
+//            return
+//        }
+
+
     }
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        when (requestCode) {
+//            1 ->
+//                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+////                        getCurrentLocation()
+////                        showPlaces4CurrentLocation(address)
+//                }
+//        }
+//    }
 }
 
 
