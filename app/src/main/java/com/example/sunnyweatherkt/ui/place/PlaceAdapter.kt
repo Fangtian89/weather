@@ -35,11 +35,11 @@ class PlaceAdapter(private val fragment:PlaceFragment,private val placeList:List
                 putExtra("place_name",place.name)
                 putExtra("place",Gson().toJson(place))
             }
-
             fragment.viewModel.savedPlace(place)                                                    //存储选中的城市
             fragment.startActivity(intent)
             fragment.activity?.finish()
         }
+
         return holder
     }
 

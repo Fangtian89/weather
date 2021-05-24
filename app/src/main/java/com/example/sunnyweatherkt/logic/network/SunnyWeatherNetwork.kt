@@ -14,6 +14,7 @@ import kotlin.coroutines.suspendCoroutine
 object SunnyWeatherNetwork {                                                                        //构建一个 统一网络数据源访问入口
     val placeService = ServiceCreator.create<PlaceService>()                                        //访问Retrofit构建器，返回retrofit 的构建接口(PlaceService)的动态管理对象，对象就可以访问自己的方法 searchPlaces
     val weatherService= ServiceCreator.create<WeatherService>()
+    val TAG="WeatherResult"
 
     suspend fun searchPlaces(query: String) = placeService.searchPlaces(query).await()                //placeService.searchPlaces(query),访问接口， placeSerive.searchPlaces(query) 返回Call<PlaceResponsing.PlaceResponse>, 因此可以 调用await
     suspend fun getRealTimeWeather(lng:String,lat:String)= weatherService.getRealTimeWeather(lng,lat).await()
@@ -41,13 +42,14 @@ object SunnyWeatherNetwork {                                                    
 //    }
 
     private suspend fun <T> Call<T>.await(): T {                                                    //写了个 await 的扩展函数， Call 的对象可以访问他,并且里面有 Call 的对象语境，可以调用 enqueue
-        Log.d("TAGGING", "await: "+Thread.currentThread().name)                                   //子线程
+        Log.d(TAG, "await: before" +
+                " suspendCoroutine"+Thread.currentThread().name)                                   //子线程
         return suspendCoroutine { continuation ->
-            Log.d("TAGGING", "await: "+Thread.currentThread().name)                               //子线程
-            enqueue(object : Callback<T> {                                                          //匿名内部类 object: Callback<T>
+            Log.d(TAG, "await: in suspendCoroutine"+Thread.currentThread().name)                               //子线程
+            enqueue(object : Callback<T> {                                                          //匿名内部类 object: Callback<T>,写回调的方法， onResponse, onFailure
                 override fun onResponse(call: Call<T>, response: Response<T>) {
                     val body = response.body()
-                    Log.d("TAGGING", "onResponse: "+Thread.currentThread().name)                  //主线程
+                    Log.d(TAG, "onResponse: in callback"+Thread.currentThread().name)                  //主线程
                     if (body != null) continuation.resume(body)                                     //恢复线程 , 返回body 值
                     else continuation.resumeWithException(
                             RuntimeException("response body is null")

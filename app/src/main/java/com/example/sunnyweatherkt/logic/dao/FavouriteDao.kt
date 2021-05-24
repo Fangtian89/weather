@@ -11,7 +11,7 @@ import com.example.sunnyweatherkt.logic.model.Weather
 import com.google.gson.Gson
 
 object FavouriteDao {
-    fun sharedPreference()=MyApplication.context.getSharedPreferences("Favourite",Context.MODE_PRIVATE)
+    fun sharedPreference()=MyApplication.context.getSharedPreferences("Favourites",Context.MODE_PRIVATE)
 
     fun saveFavouritePlace(place: PlaceResponsing.Place,weather:Weather){
         sharedPreference().edit() {
@@ -20,11 +20,11 @@ object FavouriteDao {
     }
 
     fun readFavouritePlace(): MutableMap<String, String> {
-
         val result:MutableMap<String,String>
         @Suppress("UNCHECKED_CAST")
         result=sharedPreference().all as MutableMap<String, String>
         return result
     }
+
 }
 

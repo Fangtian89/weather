@@ -36,22 +36,26 @@
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-<!--    <FrameLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_gravity="start"-->
-<!--        android:clickable="true"-->
-<!--        android:focusable="true">-->
+    <!--        动态加载-->
+    <FrameLayout
 
-        <fragment
-            android:id="@+id/placeFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:name="com.example.sunnyweatherkt.ui.place.PlaceFragment"
-            android:layout_marginTop="10dp"/>
+        android:id="@+id/frag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:clickable="true"
+        android:focusable="true">
 
-<!--    </FrameLayout>-->
+<!--        静态加载-->
+<!--        <fragment-->
+<!--            android:id="@+id/placeFragment"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_gravity="start"-->
+<!--            android:name="com.example.sunnyweatherkt.ui.place.PlaceFragment"-->
+<!--            android:layout_marginTop="10dp"/>-->
+
+    </FrameLayout>
 
 
 </androidx.drawerlayout.widget.DrawerLayout>

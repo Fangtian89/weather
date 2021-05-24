@@ -38,7 +38,7 @@ object Repository {                                                             
           emit(result)
     }
 
-    fun  refreshWeather(lng:String,lat:String) = liveData(Dispatchers.IO){
+   fun  refreshWeather(lng:String,lat:String) = liveData(Dispatchers.IO,2000){
             val result=try {
                 coroutineScope {
                     val deferredRealtime = async { SunnyWeatherNetwork.getRealTimeWeather(lng, lat) }           //因为async 需要 协程区域 coroutineScope
@@ -62,7 +62,7 @@ object Repository {                                                             
     }
 
 
-    fun favouriteWeatherRefresh(lng:String,lat:String)= liveData(Dispatchers.IO) {
+    fun favouriteWeatherRefresh(lng:String,lat:String)= liveData(Dispatchers.IO,2000) {
         val result=try {
             coroutineScope {
                 val deferredRealtime = async { SunnyWeatherNetwork.getRealTimeWeather(lng, lat) }           //因为async 需要 协程区域 coroutineScope
@@ -73,7 +73,9 @@ object Repository {                                                             
 
                 if (getResultdDaily.status .equals("ok") && getResultRealtime.status .equals("ok")) {
                     val weatherResult = Weather(getResultRealtime.result.realtime, getResultdDaily.result.daily)        //把2个结果都放在 weather,作为一个结果
-                    Result.success(weatherResult)                                                       //if 最后一行表示返回
+                    Log.d("WeatherResult", "favouriteWeatherRefresh: in Takt")
+                    Result.success(weatherResult)
+                //if 最后一行表示返回
                 } else {
                     Result.failure(RuntimeException("realtime response status is ${getResultRealtime.status} " +     //else 最后一行表示返回
                             "daily response status is ${getResultdDaily.status}!!"))
@@ -122,8 +124,6 @@ object Repository {                                                             
     }
 
     fun readFavouritePlace()=FavouriteDao.readFavouritePlace()
-
-
 }
 
 

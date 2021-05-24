@@ -1,29 +1,30 @@
 package com.example.sunnyweatherkt.ui.place
 
-import android.app.Activity
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
-import android.provider.ContactsContract
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.Data
 import com.example.sunnyweatherkt.MainActivity
 import com.example.sunnyweatherkt.MyApplication
 import com.example.sunnyweatherkt.R
+import com.example.sunnyweatherkt.Util.MapUtils
 import com.example.sunnyweatherkt.Util.showToastSt
-import com.example.sunnyweatherkt.logic.Repository
-import com.example.sunnyweatherkt.logic.model.PlaceResponsing
-import com.example.sunnyweatherkt.ui.favourite.FavouriteAdapter
 import com.example.sunnyweatherkt.ui.favourite.FavouriteViewModel
 import com.example.sunnyweatherkt.ui.weather.WeatherActivity
 import com.example.sunnyweatherkt.ui.weather.WeatherViewModel
@@ -41,23 +42,26 @@ class PlaceFragment:Fragment() {
     val favouriteViewModeliew by lazy { ViewModelProvider(this).get(FavouriteViewModel::class.java) }
     val weatherViewModel by lazy { ViewModelProvider(this).get(WeatherViewModel::class.java) }
     lateinit var adapter: PlaceAdapter
+    lateinit var address:String
     val TAG = "WeatherResult"
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        val view = inflater.inflate(R.layout.fragment_place, container, false)
-        return view
+    val TAG2="LocationInfo"
+    lateinit var mLocationManager:LocationManager
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        getCurrentLocation()
+        return inflater.inflate(R.layout.fragment_place, container, false)
     }
+
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {                                   //两个重要方法
         super.onActivityCreated(savedInstanceState)                                                  //Fragment 里面放 RecyclerView
 
         //------------------------------------------------------------------------------------------
-        if (activity is MainActivity && viewModel.isSavedPlace()) {                                   //PlaceFragment -> viewModel -> Repository -> Dao (SharedPreferences) 获取已经保存(访问)的地址
-            val lifecycleOwner = this
-            CoroutineScope(Dispatchers.IO).launch {                                                 //update favourite list
-                updateFavouriteList(lifecycleOwner)
-            }
+        if (activity is MainActivity && viewModel.isSavedPlace() ) {                                   //PlaceFragment -> viewModel -> Repository -> Dao (SharedPreferences) 获取已经保存(访问)的地址
             val place = viewModel.getSavedPlace()                                                     //要先判断一下是否有此保存的数据，然后拿出来
             val intent = Intent(context, WeatherActivity::class.java).apply {                         //跳珠进入 weatherActivity
                 putExtra("location_lng", place.location.lng)
@@ -67,18 +71,19 @@ class PlaceFragment:Fragment() {
             }
             startActivity(intent)
             activity?.finish()                                                                      //关掉之前activity 或 fragment
+            Log.d(TAG, "activity finished?")
             return                                                                                  //从数据库获得的数据，展示后直接退出，适用于不是第一次使用
         }
 
         //------------------------------------------------------------------------------------------
 
-        val layoutManager = LinearLayoutManager(activity)                                       //加载 RecyclerView
+        val layoutManager = LinearLayoutManager(activity)                                           //加载 RecyclerView
         recyclerView.layoutManager = layoutManager
         adapter = PlaceAdapter(this, viewModel.placeList)
         recyclerView.adapter = adapter
         //Log.d(TAG, "onActivityCreated_2: " + activity)
 
-        searchPlaceEdit.addTextChangedListener { edit ->                                        //重要方法 addTextChangedListener
+        searchPlaceEdit.addTextChangedListener { edit ->                                            //重要方法 addTextChangedListener
             val content = edit.toString()
             if (content.isNotEmpty()) {
                 viewModel.searchPlacesViewModel(content)
@@ -106,43 +111,205 @@ class PlaceFragment:Fragment() {
                 result.exceptionOrNull()?.printStackTrace()
             }
         })
-    }
 
-    suspend fun updateFavouriteList(lifecycleOwner: LifecycleOwner) {
-        val placeWeatherList =
-                favouriteViewModeliew.readFavouritePlace()                                              //从SharedPreferences 获取地址,天气list
-        var list = ArrayList<PlaceResponsing.Place>()
 
-        placeWeatherList.forEach { (t, u) ->
-            list.add(Gson().fromJson(t, PlaceResponsing.Place::class.java))                          //取出地址，放到Arraylist 中,  造一个新的list, key是城市名字,value是PlaceResponsing.Place
+        navigationLocation.setOnClickListener {
+            Log.d(TAG, "onActivityCreated: "+address)
+            showPlaces(address)
         }
 
-//        val mHandler= object : Handler() {
-//            override fun handleMessage(msg: Message) {
-//
+
+    }
+
+    private fun showPlaces(address:String) {
+        val layoutManager = LinearLayoutManager(activity)                                           //加载 RecyclerView
+        recyclerView.layoutManager = layoutManager
+        adapter = PlaceAdapter(this, viewModel.placeList)
+        recyclerView.adapter = adapter
+        //Log.d(TAG, "onActivityCreated_2: " + activity)
+
+//        searchPlaceEdit.addTextChangedListener { edit ->                                            //重要方法 addTextChangedListener
+//            val content = edit.toString()
+//            if (content.isNotEmpty()) {
+//                viewModel.searchPlacesViewModel(content)
+//                //Log.d(TAG, "onActivityCreated_4: " + activity)
+//            } else {
+//                recyclerView.visibility = View.GONE
+//                bgImageView.visibility = View.VISIBLE
+//                viewModel.placeList.clear()
+//                adapter.notifyDataSetChanged()
 //            }
 //        }
 
+        searchPlaceEdit.setText(address)
 
-        list.forEach() {
-            if (view != null) {                                                                     //getView 哪的View? fragment root 的 view
-                favouriteViewModeliew.refreshFavouriteWeather(it.location.lng, it.location.lat)
+        viewModel.placeLiveData.observe(viewLifecycleOwner, Observer { result ->
+            val places =
+                result.getOrNull()                                                              //getOrNull() 即非null 返回正差值，为null 时返回 null
+            if (places != null) {
+                //Log.d(TAG, "onActivityCreated_3: " + activity)
+                recyclerView.visibility = View.VISIBLE
+                bgImageView.visibility = View.GONE
+                viewModel.placeList.clear()
+                viewModel.placeList.addAll(places)
+                adapter.notifyDataSetChanged()
+            } else {
+                "places are not found".showToastSt()
+                result.exceptionOrNull()?.printStackTrace()
+            }
+        })
+    }
 
-                withContext(Dispatchers.Main){
-                    favouriteViewModeliew.favouriteWeatherLiveData.observe(lifecycleOwner, Observer {    //更新sharedpreference 里的天气
-                        result ->
-                        val weatherResult = result.getOrNull()
-                        Thread.sleep(1000)
-                        Log.d(TAG, "updateFavouriteList: "+weatherResult)
-                        if (weatherResult != null) {
-                            favouriteViewModeliew.saveFavouritePlace(it, weatherResult)                   //保存地址和新天气情况在sharedPreferences
-                        }
-                    })
+    private fun getCurrentLocation():String? {
+        if(ContextCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >=23){
+            var location: Location?=null
+            val mProviderName:String
+            mLocationManager = activity?.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager                    //做一个 locationmanager 对象
+
+            val isGpsEnabled = MapUtils.isGPSProviderAvailable(mLocationManager)
+            val isWIFIEnabled= MapUtils.isWIFIProviderAvailable(mLocationManager)
+
+
+            if (isGpsEnabled&&!isWIFIEnabled){
+                mProviderName= LocationManager.GPS_PROVIDER
+//                mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
+                location=mLocationManager.getLastKnownLocation(mProviderName)
+
+                if(location!=null){
+                    val lon=location.longitude
+                    val lat=location.latitude
+                    Log.d(TAG2, "getCurrentLocation GPS before WIFI: $mProviderName $lon $lat")
+                    val geocoder = Geocoder(MyApplication.context, Locale.getDefault())
+                    val list = geocoder.getFromLocation( location.latitude, location.longitude,1)
+                    address = list[0].locality
+                    Log.d(TAG2, "getCurrentLocation...: $address")
+                    return address
+
+                }else{
+                    mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
                 }
 
+            }else if (!isGpsEnabled && isWIFIEnabled){
+                mProviderName= LocationManager.NETWORK_PROVIDER
+//                mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
+                location=mLocationManager.getLastKnownLocation(mProviderName)
+                if(location!=null){
+                    val lon=location.longitude
+                    val lat=location.latitude
+                    Log.d(TAG2, "getCurrentLocation GPS before WIFI: $mProviderName $lon $lat")
+                    val geocoder = Geocoder(MyApplication.context, Locale.getDefault())
+                    val list = geocoder.getFromLocation( location.latitude, location.longitude,1)
+                    address = list[0].locality
+                    Log.d(TAG2, "getCurrentLocation...: $address")
+                    return address
+                }else{
+                    mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
+                }
 
+            }else if(isGpsEnabled && isWIFIEnabled) {
+                mProviderName= LocationManager.GPS_PROVIDER
+//                mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
+                location=mLocationManager.getLastKnownLocation(mProviderName)
+                if(location!=null){
+                    val lon=location.longitude
+                    val lat=location.latitude
+                    Log.d(TAG2, "getCurrentLocation GPS before WIFI: $mProviderName $lon $lat")
+                    val geocoder = Geocoder(MyApplication.context, Locale.getDefault())
+                    val list = geocoder.getFromLocation( location.latitude, location.longitude,1)
+                    address = list[0].locality
+                    Log.d(TAG2, "getCurrentLocation...: $address")
+                    return address
+                }else{
+                    mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
+                }
 
+            }else if (!isGpsEnabled && !isWIFIEnabled){
+                "please turn on location".showToastSt()
+            }
+        }else if (Build.VERSION.SDK_INT<23){
+            var location: Location?=null
+            val mProviderName:String
+            val mLocationManager = activity?.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager                    //做一个 locationmanager 对象
+
+            val isGpsEnabled = MapUtils.isGPSProviderAvailable(mLocationManager)
+            val isWIFIEnabled= MapUtils.isWIFIProviderAvailable(mLocationManager)
+
+            if (isGpsEnabled&&!isWIFIEnabled){
+                mProviderName= LocationManager.GPS_PROVIDER
+//                mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
+                location=mLocationManager.getLastKnownLocation(mProviderName)
+
+                if(location!=null){
+                    val lon=location.longitude
+                    val lat=location.latitude
+                    Log.d(TAG2, "getCurrentLocation GPS before WIFI: $mProviderName $lon $lat")
+                    val geocoder = Geocoder(MyApplication.context, Locale.getDefault())
+                    val list = geocoder.getFromLocation( location.latitude, location.longitude,1)
+                    address = list[0].locality
+                    Log.d(TAG2, "getCurrentLocation...: $address")
+                    return address
+
+                }else{
+                    mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
+                }
+
+            }else if (!isGpsEnabled && isWIFIEnabled){
+                mProviderName= LocationManager.NETWORK_PROVIDER
+//                mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
+                location=mLocationManager.getLastKnownLocation(mProviderName)
+                if(location!=null){
+                    val lon=location.longitude
+                    val lat=location.latitude
+                    Log.d(TAG2, "getCurrentLocation GPS before WIFI: $mProviderName $lon $lat")
+                    val geocoder = Geocoder(MyApplication.context, Locale.getDefault())
+                    val list = geocoder.getFromLocation( location.latitude, location.longitude,1)
+                    address = list[0].locality
+                    Log.d(TAG2, "getCurrentLocation...: $address")
+                    return address
+                }else{
+                    mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
+                }
+
+            }else if(isGpsEnabled && isWIFIEnabled) {
+                mProviderName= LocationManager.GPS_PROVIDER
+//                mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
+                location=mLocationManager.getLastKnownLocation(mProviderName)
+                if(location!=null){
+                    val lon=location.longitude
+                    val lat=location.latitude
+                    Log.d(TAG2, "getCurrentLocation GPS before WIFI: $mProviderName $lon $lat")
+                    val geocoder = Geocoder(MyApplication.context, Locale.getDefault())
+                    val list = geocoder.getFromLocation( location.latitude, location.longitude,1)
+                    address = list[0].locality
+                    Log.d(TAG2, "getCurrentLocation...: $address")
+                    return  address
+                }else{
+                    mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
+                }
+
+            }else if (!isGpsEnabled && !isWIFIEnabled){
+                "please turn on location".showToastSt()
             }
         }
+        return null
     }
+
+    val mLocationListener= object : LocationListener {
+
+        override fun onLocationChanged(location: Location) {
+            val lon=location.longitude
+            val lat=location.latitude
+            val geocoder = Geocoder(MyApplication.context, Locale.getDefault())
+            val list = geocoder.getFromLocation( location.latitude, location.longitude,1)
+            address = list[0].locality
+            showPlaces(address)
+        }
+    }
+
+
+
+
 }

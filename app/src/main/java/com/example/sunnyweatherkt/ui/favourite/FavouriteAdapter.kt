@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
 import com.example.sunnyweatherkt.R
 import com.example.sunnyweatherkt.Util.startActivity
+import com.example.sunnyweatherkt.logic.Repository
 import com.example.sunnyweatherkt.logic.model.PlaceResponsing
 import com.example.sunnyweatherkt.logic.model.RealTimeResponse
 import com.example.sunnyweatherkt.logic.model.getSky
@@ -43,10 +44,11 @@ class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<Pla
                 putExtra("place_name",name)
                 putExtra("place", Gson().toJson(list[clickPosition]))
             }
+            Repository.savePlace(list[clickPosition])                                               //没有用 viewmodel ，而直接任意一个viewmodel 用 Repository 里的函数了。 好，坏？
         }
     }
 
-    override fun getItemCount()=weather?.size
+    override fun getItemCount()=weather.size
 
     inner class Holder(view:View):RecyclerView.ViewHolder(view){
         val placeName=view.findViewById(R.id.placeInfo) as TextView

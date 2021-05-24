@@ -4,6 +4,7 @@ package com.example.sunnyweatherkt.logic.network
 import com.example.sunnyweatherkt.logic.model.PlaceResponsing
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PlaceService {

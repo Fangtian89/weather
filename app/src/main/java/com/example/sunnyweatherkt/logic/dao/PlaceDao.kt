@@ -9,7 +9,7 @@ import com.example.sunnyweatherkt.logic.network.SunnyWeatherNetwork
 import com.google.gson.Gson
 
 object PlaceDao {                                                                                   //单例类
-    private fun sharePreferences()=MyApplication.context.getSharedPreferences("sunny_weather",Context.MODE_PRIVATE)
+    private fun sharePreferences()=MyApplication.context.getSharedPreferences("sunnyweather",Context.MODE_PRIVATE)
 
     fun savePlace(place: PlaceResponsing.Place) {
             sharePreferences().edit() {
