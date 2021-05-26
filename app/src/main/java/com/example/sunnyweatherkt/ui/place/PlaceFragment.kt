@@ -14,6 +14,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -49,9 +51,11 @@ class PlaceFragment:Fragment() {
     val TAG = "WeatherResult"
     val TAG2 = "LocationInfo"
     lateinit var mLocationManager: LocationManager
-
+    lateinit var searchPlaceEdit:EditText
+    lateinit var deleteButton: ImageButton
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
     }
 
     override fun onCreateView(
@@ -63,11 +67,11 @@ class PlaceFragment:Fragment() {
         return inflater.inflate(R.layout.fragment_place, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        searchPlaceEdit=view.findViewById(R.id.edit)as EditText
+        deleteButton=view.findViewById(R.id.delete_2)as ImageButton
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {                                   //两个重要方法
-        super.onActivityCreated(savedInstanceState)                                                  //Fragment 里面放 RecyclerView
-
-        //------------------------------------------------------------------------------------------
         if (activity is MainActivity && viewModel.isSavedPlace()) {                                   //PlaceFragment -> viewModel -> Repository -> Dao (SharedPreferences) 获取已经保存(访问)的地址
             val place =
                 viewModel.getSavedPlace()                                                     //要先判断一下是否有此保存的数据，然后拿出来
@@ -86,6 +90,7 @@ class PlaceFragment:Fragment() {
             return                                                                                  //从数据库获得的数据，展示后直接退出，适用于不是第一次使用
         }
 
+
         //------------------------------------------------------------------------------------------
 
         val layoutManager =
@@ -99,7 +104,7 @@ class PlaceFragment:Fragment() {
             val content = edit.toString()
             if (content.isNotEmpty()) {
                 viewModel.searchPlacesViewModel(content)
-                //Log.d(TAG, "onActivityCreated_4: " + activity)
+                Log.d(TAG, "onActivityCreated_4: " + activity)
             } else {
                 recyclerView.visibility = View.GONE
                 bgImageView.visibility = View.VISIBLE
@@ -127,6 +132,7 @@ class PlaceFragment:Fragment() {
 
 
         navigationLocation.setOnClickListener {
+
             if (ContextCompat.checkSelfPermission(                                                  //请求地理权限
                     MyApplication.context,
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -134,11 +140,18 @@ class PlaceFragment:Fragment() {
             ) {
                 requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)    //!!!在fragment 里面询问要用这句话，才能 call onRequestPermission
             } else {                                                                                //如果权限已经有了
-            getCurrentLocation()
-            Log.d(TAG, "onActivityCreated: " + address)
-            showPlaces4CurrentLocation(address)
+                getCurrentLocation()
+                Log.d(TAG, "onActivityCreated: üüüü" + address)
+                showPlaces4CurrentLocation(address)
             }
         }
+
+        deleteButton.setOnClickListener {
+            searchPlaceEdit.setText("")
+        }
+    }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {                                   //两个重要方法
+        super.onActivityCreated(savedInstanceState)                                                  //Fragment 里面放 RecyclerView
     }
 
     private fun showPlaces4CurrentLocation(address:String) {
@@ -345,5 +358,9 @@ class PlaceFragment:Fragment() {
         }
     }
 
+//    override fun onStop() {
+//        super.onStop()
+//        mLocationManager.removeUpdates(mLocationListener)
+//    }
 
 }

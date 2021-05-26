@@ -22,29 +22,33 @@
         android:layout_height="60dp"
         android:background="@color/lightblue">
 
-        <EditText
-            android:id="@+id/searchPlaceEdit"
+        <include layout="@layout/search"
             android:layout_width="0dp"
-            android:layout_weight="5"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical"
-            android:drawableRight="@drawable/delete_2"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:hint="give an address"
-            android:background="@color/white"/>
+            android:layout_weight="6"
+            android:layout_height="wrap_content"/>
+<!--        <EditText-->
+<!--            android:id="@+id/searchPlaceEdit"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_weight="5"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:drawableRight="@drawable/delete_2"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:paddingStart="10dp"-->
+<!--            android:paddingEnd="10dp"-->
+<!--            android:hint="give an address"-->
+<!--            android:background="@color/white"/>-->
 
         <ImageView
             android:id="@+id/navigationLocation"
             android:clickable="true"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp"
             android:paddingLeft="2dp"
             android:layout_height="wrap_content"
             android:src="@drawable/navigation"/>

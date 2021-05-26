@@ -124,6 +124,8 @@ object Repository {                                                             
     }
 
     fun readFavouritePlace()=FavouriteDao.readFavouritePlace()
+
+    fun removeFavouritePlace(key:PlaceResponsing.Place)=FavouriteDao.removeFavouritePlace(key)
 }
 
 

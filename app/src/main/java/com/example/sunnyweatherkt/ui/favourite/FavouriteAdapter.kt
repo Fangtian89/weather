@@ -16,9 +16,10 @@ import com.example.sunnyweatherkt.logic.model.RealTimeResponse
 import com.example.sunnyweatherkt.logic.model.getSky
 import com.example.sunnyweatherkt.ui.weather.WeatherActivity
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.now.*
 
-class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<PlaceResponsing.Place,RealTimeResponse.RealTime>):RecyclerView.Adapter<FavouriteAdapter.Holder>() {
-
+class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<PlaceResponsing.Place,RealTimeResponse.RealTime>):RecyclerView.Adapter<FavouriteAdapter.Holder>(),RecyclerViewItemTouchHelper.ItemTouchHelperCallback {
+    lateinit var list:List<PlaceResponsing.Place>
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):Holder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.favourite_item,parent,false)
         return Holder(view)
@@ -26,7 +27,7 @@ class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<Pla
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
 
-        val list =ArrayList<PlaceResponsing.Place>(weather.keys)                                    //把weather 里的 keys 都拿出来，放入一个Arraylist 中
+        list =ArrayList<PlaceResponsing.Place>(weather.keys)                                    //把weather 里的 keys 都拿出来，放入一个Arraylist 中
         val name=list[position].name
         holder.placeName.text=name
         holder.temperatureInfo.text= weather[list[position]]!!.temperature.toString()+"°C"          //通过key 得到 value，  因为在FavouriteFrag 里面判断了weather 不为null, 所以敢硬气的用 !!
@@ -55,6 +56,22 @@ class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<Pla
         val skyIcon=view.findViewById(R.id.skyIcon)as ImageView
         val skyInfo=view.findViewById(R.id.skyInfo)as TextView
         val temperatureInfo=view.findViewById(R.id.temperatureInfo)as TextView
+    }
+
+    override fun onItemDelete(position: Int) {
+
+        Repository.removeFavouritePlace(list[position])                                             //方法可能不好,直接访问 Repository
+        weather.remove(list[position])                                                              //删除时，这个要有
+        //notifyItemRemoved(position)                                                               也可以有
+        notifyDataSetChanged()                                                                      //其次这个要有
+        if(Repository.readFavouritePlace().isEmpty()){                                              //方法可能不好
+            fragment.activity?.finish()                                                             // favouriteActivity finish()
+
+        }
+    }
+
+    override fun onMove(fromPosition: Int, toPosition: Int) {
+        TODO("Not yet implemented")
     }
 }
 

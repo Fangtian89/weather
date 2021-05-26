@@ -12,7 +12,9 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
@@ -68,9 +70,16 @@ class FavouriteFragment: Fragment() {
                 adapter=FavouriteAdapter(this,weatherResult)
                 recyclerView.adapter=adapter
 
+
+                val callBack=RecyclerViewItemTouchHelper(adapter)
+                val itemTouchHelper=ItemTouchHelper(callBack)
+                itemTouchHelper.attachToRecyclerView(recyclerView)
+
+
             }
             adapter.notifyDataSetChanged()
     }
+
 }
 
 

@@ -27,6 +27,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.sunnyweatherkt.MyApplication
 import com.example.sunnyweatherkt.R
 import com.example.sunnyweatherkt.Util.MapUtils
@@ -57,7 +58,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class WeatherActivity : AppCompatActivity() {
+class WeatherActivity : AppCompatActivity(){
 
     val weatherViewModel by lazy { ViewModelProvider(this).get(WeatherViewModel::class.java) }
     val favouriteViewModeliew by lazy { ViewModelProvider(this).get(FavouriteViewModel::class.java) }
@@ -150,14 +151,27 @@ class WeatherActivity : AppCompatActivity() {
             //supportFragmentManager.beginTransaction().add(R.id.drawerLayout,FavouriteFragment::class.java.newInstance()).addToBackStack(null).commit()
             startActivity<FavouriteActivity>(this) {}
         }
-
                                                                                                     //静态加载PlaceFragment
-        if(Repository.readFavouritePlace().isEmpty()){                                              //方法可能不好
+        if(Repository.readFavouritePlace().isEmpty()){                                              //方法可能不好,直接访问了 Repository
             nav_list.visibility=View.GONE
         }else
             nav_list.visibility=View.VISIBLE
 
     }
+
+    override fun onRestart() {
+        super.onRestart()
+        if (Repository.readFavouritePlace().isEmpty()){
+            nav_list.visibility=View.GONE
+        }
+    }
+
+//    override fun onResume() {
+//        super.onResume()
+//        if (Repository.readFavouritePlace().isNotEmpty()){
+//            nav_list.visibility=View.GONE
+//        }
+//    }
 
 
     fun refreshWeather() {
@@ -216,5 +230,7 @@ class WeatherActivity : AppCompatActivity() {
         carWashingText.text = lifeIndex.carWashing[0].desc
         weatherLayout.visibility = View.VISIBLE
     }
+
+
 }
 

@@ -26,5 +26,11 @@ object FavouriteDao {
         return result
     }
 
+    fun removeFavouritePlace(key:PlaceResponsing.Place){
+        sharedPreference().edit(){
+            remove(Gson().toJson(key))
+        }
+    }
+
 }
 

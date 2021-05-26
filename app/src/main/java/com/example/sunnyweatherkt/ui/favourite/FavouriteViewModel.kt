@@ -33,4 +33,5 @@ class FavouriteViewModel:ViewModel() {
 
     fun readFavouritePlace()=Repository.readFavouritePlace()
 
+    fun removeFavouritePlace(key:PlaceResponsing.Place)=Repository.removeFavouritePlace(key)
 }
