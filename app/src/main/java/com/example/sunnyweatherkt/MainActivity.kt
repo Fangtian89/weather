@@ -3,6 +3,8 @@ package com.example.sunnyweatherkt
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
@@ -32,46 +34,26 @@ import java.util.*
 import kotlin.math.log
 
 class MainActivity : AppCompatActivity(){
-//    lateinit var locationManager: LocationManager
+
     val TAG = "WeatherResult"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Log.d(TAG, "onCreate: "+MyApplication.context.resources.displayMetrics)
+        val bitmap=BitmapFactory.decodeResource(MyApplication.context.resources,R.drawable.sky)
+        Log.d(TAG, "onCreate: ${bitmap.byteCount} ${bitmap.width} ${bitmap.height}")
+
+        Log.d(TAG, "onCreate: ....")
+
         //静态加载PlaceFragment
         val intentService = Intent(this, MyService::class.java)
         Log.d(TAG, "onCreate: start Service")
         startService(intentService)
-        //        locationManager=applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager                    //做一个 locationmanager 对象
-        //可以返回都有哪些provider,或像下面直接指定 , val provider=locationManager.getProviders(true)
-
-//        if (ContextCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            ActivityCompat.requestPermissions(
-//                this,
-//                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-//        } else {
-//            return
-//        }
 
 
     }
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        when (requestCode) {
-//            1 ->
-//                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-////                        getCurrentLocation()
-////                        showPlaces4CurrentLocation(address)
-//                }
-//        }
-//    }
+
 }
 
 

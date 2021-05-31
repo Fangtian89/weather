@@ -94,7 +94,7 @@ class PlaceFragment:Fragment() {
         //------------------------------------------------------------------------------------------
 
         val layoutManager =
-            LinearLayoutManager(activity)                                           //加载 RecyclerView
+            LinearLayoutManager(activity)                                                           //加载 RecyclerView
         recyclerView.layoutManager = layoutManager
         adapter = PlaceAdapter(this, viewModel.placeList)
         recyclerView.adapter = adapter
@@ -207,7 +207,6 @@ class PlaceFragment:Fragment() {
             val isGpsEnabled = MapUtils.isGPSProviderAvailable(mLocationManager)
             val isWIFIEnabled= MapUtils.isWIFIProviderAvailable(mLocationManager)
 
-
             if (isGpsEnabled&&!isWIFIEnabled){
                 mProviderName= LocationManager.GPS_PROVIDER
 //                mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
@@ -247,6 +246,7 @@ class PlaceFragment:Fragment() {
                 mProviderName= LocationManager.GPS_PROVIDER
 //                mLocationManager.requestLocationUpdates(mProviderName,5000,100f,mLocationListener)
                 location=mLocationManager.getLastKnownLocation(mProviderName)
+//                mLocationManager.getCurrentLocation(mProviderName,)
                 if(location!=null){
                     val lon=location.longitude
                     val lat=location.latitude

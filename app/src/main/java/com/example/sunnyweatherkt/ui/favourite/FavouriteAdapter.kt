@@ -58,7 +58,7 @@ class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<Pla
         val temperatureInfo=view.findViewById(R.id.temperatureInfo)as TextView
     }
 
-    override fun onItemDelete(position: Int) {
+    override fun onItemDelete(position: Int) {                                                      //接口 RecyclerViewItemTouchHelper.ItemTouchHelperCallback 的具体实现
 
         Repository.removeFavouritePlace(list[position])                                             //方法可能不好,直接访问 Repository
         weather.remove(list[position])                                                              //删除时，这个要有
