@@ -8,8 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
-        android:src="@drawable/sky"
-        android:scaleType="fitCenter"
+        android:src="@drawable/skyblue"
+        android:scaleType="fitXY"
         />
 
     <LinearLayout
@@ -20,11 +20,11 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_height="60dp"
-        android:background="@color/lightblue">
+        >
 
         <include layout="@layout/search"
             android:layout_width="0dp"
-            android:layout_weight="8"
+            android:layout_weight="9"
             android:layout_height="wrap_content"/>
 <!--        <EditText-->
 <!--            android:id="@+id/searchPlaceEdit"-->

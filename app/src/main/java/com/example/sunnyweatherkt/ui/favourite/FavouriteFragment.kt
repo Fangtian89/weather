@@ -42,16 +42,14 @@ class FavouriteFragment: Fragment(){
         val formatter= SimpleDateFormat("YYYY/M/dd HH:mm")
         val formatted=formatter.format(date)
         updateTime.text=formatted
-
         val placeWeatherList=favouriteViewModeliew.readFavouritePlace()                             //从SharedPreferences 直接读取地址及天气list
-
-
         val weatherResult = mutableMapOf<PlaceResponsing.Place,RealTimeResponse.RealTime>()
-        placeWeatherList.forEach(){                                                             //转换
+
+        placeWeatherList.forEach(){                                                                 //转换
             val placeInGson=Gson().fromJson(it.key,PlaceResponsing.Place::class.java)
             val weatherInGson=Gson().fromJson(it.value,Weather::class.java)
             val realTimeInGson=weatherInGson.realTime
-            weatherResult[placeInGson] = realTimeInGson
+            weatherResult[placeInGson] = realTimeInGson                                             //put
         }
         list=ArrayList(weatherResult.keys)
 
@@ -125,7 +123,7 @@ class FavouriteFragment: Fragment(){
 
         if (weatherResult!=null){                                                                   //确定 weatherResult 绝不为空，在Adapter 里 才敢保证用 !!
             adapter=FavouriteAdapter(this,weatherResult)                                    //实例化 adapter
-            recyclerView.adapter=adapter
+            recyclerView.adapter=adapter                                                            //setAdapter 要放到 setWipeMenuCreator 后面
             recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
                     outRect: Rect,
