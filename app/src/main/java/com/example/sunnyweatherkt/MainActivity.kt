@@ -50,8 +50,6 @@ class MainActivity : AppCompatActivity(){
         val intentService = Intent(this, MyService::class.java)
         Log.d(TAG, "onCreate: start Service")
         startService(intentService)
-
-
     }
 
 }

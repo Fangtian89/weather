@@ -2,26 +2,30 @@ package com.example.sunnyweatherkt.ui.favourite
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.AdapterView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sunnyweatherkt.R
+import com.example.sunnyweatherkt.logic.Repository
 import com.example.sunnyweatherkt.logic.model.PlaceResponsing
 import com.example.sunnyweatherkt.logic.model.RealTimeResponse
 import com.example.sunnyweatherkt.logic.model.Weather
 import com.google.gson.Gson
+import com.yanzhenjie.recyclerview.*
 import kotlinx.android.synthetic.main.favouritelayout.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
-class FavouriteFragment: Fragment() {
+class FavouriteFragment: Fragment(){
     val favouriteViewModeliew by lazy { ViewModelProvider(this).get(FavouriteViewModel::class.java) }
     lateinit var adapter: FavouriteAdapter
+    lateinit var list:ArrayList<PlaceResponsing.Place>
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,10 +35,8 @@ class FavouriteFragment: Fragment() {
         return view
     }
 
-
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {                                   //只起到展示作用
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val date= Calendar.getInstance().time
         val formatter= SimpleDateFormat("YYYY/M/dd HH:mm")
@@ -43,62 +45,117 @@ class FavouriteFragment: Fragment() {
 
         val placeWeatherList=favouriteViewModeliew.readFavouritePlace()                             //从SharedPreferences 直接读取地址及天气list
 
-            val weatherResult = mutableMapOf<PlaceResponsing.Place,RealTimeResponse.RealTime>()
-            placeWeatherList.forEach(){                                                             //转换
-                val placeInGson=Gson().fromJson(it.key,PlaceResponsing.Place::class.java)
-                val weatherInGson=Gson().fromJson(it.value,Weather::class.java)
-                val realTimeInGson=weatherInGson.realTime
-                weatherResult[placeInGson] = realTimeInGson
+
+        val weatherResult = mutableMapOf<PlaceResponsing.Place,RealTimeResponse.RealTime>()
+        placeWeatherList.forEach(){                                                             //转换
+            val placeInGson=Gson().fromJson(it.key,PlaceResponsing.Place::class.java)
+            val weatherInGson=Gson().fromJson(it.value,Weather::class.java)
+            val realTimeInGson=weatherInGson.realTime
+            weatherResult[placeInGson] = realTimeInGson
+        }
+        list=ArrayList(weatherResult.keys)
+
+//            val layoutManager=LinearLayoutManager(activity)                                       //展示到RecyclerView
+//            recyclerView.layoutManager=layoutManager
+//            if (weatherResult!=null){                                                             //确定 weatherResult 绝不为空，在Adapter 里 才敢保证用 !!
+//                adapter=FavouriteAdapter(this,weatherResult)                                      //实例化 adapter
+//                recyclerView.adapter=adapter
+//                recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
+//                    override fun getItemOffsets(
+//                        outRect: Rect,
+//                        view: View,
+//                        parent: RecyclerView,
+//                        state: RecyclerView.State
+//                    ) {
+//                        super.getItemOffsets(outRect, view, parent, state)
+//                        outRect.set(3,3,3,3)
+//                    }
+//                })
+//            }
+
+        val swipeMenuCreator=
+            SwipeMenuCreator { swipeLeftMenu, swipeRightMenu, position ->
+                val width=20
+                val height=ViewGroup.LayoutParams.MATCH_PARENT
+
+                val deleteItem= object : SwipeMenuItem(context) {
+                }.setImage(R.drawable.swipedelete)
+                    .setWidth(200)
+                    .setHeight(height)
+                swipeRightMenu.addMenuItem(deleteItem)                                              //添加右侧菜单
+
+//                val addItem= object : SwipeMenuItem(context) {
+//                }.setText("add")
+//                    .setTextColor(resources.getColor(R.color.black))
+//                    .setWidth(width)
+//                    .setHeight(height)
+//                swipeRightMenu.addMenuItem(addItem)                                               //向右侧再添加一个添加菜单
             }
 
-            val layoutManager=LinearLayoutManager(activity)                                         //展示到RecyclerView
-            recyclerView.layoutManager=layoutManager
-            if (weatherResult!=null){                                                               //确定 weatherResult 绝不为空，在Adapter 里 才敢保证用 !!
-                adapter=FavouriteAdapter(this,weatherResult)
-                recyclerView.adapter=adapter
-                recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
-                    /**
-                     * Retrieve any offsets for the given item. Each field of `outRect` specifies
-                     * the number of pixels that the item view should be inset by, similar to padding or margin.
-                     * The default implementation sets the bounds of outRect to 0 and returns.
-                     *
-                     *
-                     *
-                     * If this ItemDecoration does not affect the positioning of item views, it should set
-                     * all four fields of `outRect` (left, top, right, bottom) to zero
-                     * before returning.
-                     *
-                     *
-                     *
-                     * If you need to access Adapter for additional data, you can call
-                     * [RecyclerView.getChildAdapterPosition] to get the adapter position of the
-                     * View.
-                     *
-                     * @param outRect Rect to receive the output.
-                     * @param view    The child view to decorate
-                     * @param parent  RecyclerView this ItemDecoration is decorating
-                     * @param state   The current state of RecyclerView.
-                     */
-                    override fun getItemOffsets(
-                        outRect: Rect,
-                        view: View,
-                        parent: RecyclerView,
-                        state: RecyclerView.State
-                    ) {
-                        super.getItemOffsets(outRect, view, parent, state)
-                        outRect.set(3,3,3,3)
+        val mMenuItemClickListener= object : OnItemMenuClickListener {
+            override fun onItemClick(menuBridge: SwipeMenuBridge, position: Int) {
+
+                menuBridge.closeMenu()
+                val direction = menuBridge.direction                                                // 左侧还是右侧菜单。
+                val menuPosition = menuBridge.position                                              // 菜单在RecyclerView的Item中的Position。
+
+                if (direction == SwipeRecyclerView.RIGHT_DIRECTION) {
+                    Repository.removeFavouritePlace(list[position])                                 //sharedpreferences 里面的删除
+                    weatherResult.remove(list[position])                                            //传给 adapter 里的数据删除
+                    list.removeAt(position)                                                         //这里list 也需要删除，
+                    adapter.notifyDataSetChanged()
+                    if(Repository.readFavouritePlace().isEmpty()){                                              //方法可能不好
+                        activity?.finish()                                                          // favouriteActivity finish()
                     }
-                })
-
-                val callBack=RecyclerViewItemTouchHelper(adapter)                                   //swipe是 重要指示
-                val itemTouchHelper=ItemTouchHelper(callBack)
-                itemTouchHelper.attachToRecyclerView(recyclerView)
+                } else if (direction == SwipeRecyclerView.LEFT_DIRECTION) {
+                    Toast.makeText(
+                        context,
+                        "list第$position; 左侧菜单第$menuPosition",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
             }
-            adapter.notifyDataSetChanged()
+        }
+
+        recyclerView.setSwipeMenuCreator(swipeMenuCreator)
+        recyclerView.setOnItemMenuClickListener(mMenuItemClickListener)
+        val layoutManager=LinearLayoutManager(activity)                                             //展示到RecyclerView
+        recyclerView.layoutManager=layoutManager
+
+        if (weatherResult!=null){                                                                   //确定 weatherResult 绝不为空，在Adapter 里 才敢保证用 !!
+            adapter=FavouriteAdapter(this,weatherResult)                                    //实例化 adapter
+            recyclerView.adapter=adapter
+            recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
+                override fun getItemOffsets(
+                    outRect: Rect,
+                    view: View,
+                    parent: RecyclerView,
+                    state: RecyclerView.State
+                ) {
+                    super.getItemOffsets(outRect, view, parent, state)
+                    outRect.set(3,3,3,3)
+                }
+            })
+        }
+
+//        recyclerView.setSwipeMenuCreator(swipeMenuCreator)
+//        recyclerView.setOnItemMenuClickListener(mMenuItemClickListener)
+
+
+
+    }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {                                   //只起到展示作用
+        super.onActivityCreated(savedInstanceState)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+    }
 
-
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return super.onOptionsItemSelected(item)
+    }
 }
 
 

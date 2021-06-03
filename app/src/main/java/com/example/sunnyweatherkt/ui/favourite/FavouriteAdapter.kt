@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -16,9 +17,11 @@ import com.example.sunnyweatherkt.logic.model.RealTimeResponse
 import com.example.sunnyweatherkt.logic.model.getSky
 import com.example.sunnyweatherkt.ui.weather.WeatherActivity
 import com.google.gson.Gson
+import com.yanzhenjie.recyclerview.ExpandableAdapter
+import com.yanzhenjie.recyclerview.SwipeRecyclerView
 import kotlinx.android.synthetic.main.now.*
 
-class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<PlaceResponsing.Place,RealTimeResponse.RealTime>):RecyclerView.Adapter<FavouriteAdapter.Holder>(),RecyclerViewItemTouchHelper.ItemTouchHelperCallback {
+class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<PlaceResponsing.Place,RealTimeResponse.RealTime>):RecyclerView.Adapter<FavouriteAdapter.Holder>(){
     lateinit var list:List<PlaceResponsing.Place>
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):Holder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.favourite_item,parent,false)
@@ -58,21 +61,6 @@ class FavouriteAdapter(val fragment:FavouriteFragment,val weather:MutableMap<Pla
         val temperatureInfo=view.findViewById(R.id.temperatureInfo)as TextView
     }
 
-    override fun onItemDelete(position: Int) {                                                      //接口 RecyclerViewItemTouchHelper.ItemTouchHelperCallback 的具体实现
-
-        Repository.removeFavouritePlace(list[position])                                             //方法可能不好,直接访问 Repository
-        weather.remove(list[position])                                                              //删除时，这个要有
-        //notifyItemRemoved(position)                                                               也可以有
-        notifyDataSetChanged()                                                                      //其次这个要有
-        if(Repository.readFavouritePlace().isEmpty()){                                              //方法可能不好
-            fragment.activity?.finish()                                                             // favouriteActivity finish()
-
-        }
-    }
-
-    override fun onMove(fromPosition: Int, toPosition: Int) {
-        TODO("Not yet implemented")
-    }
 }
 
 
