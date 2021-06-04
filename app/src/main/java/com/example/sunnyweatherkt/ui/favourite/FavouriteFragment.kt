@@ -73,19 +73,19 @@ class FavouriteFragment: Fragment(){
 
         val swipeMenuCreator=
             SwipeMenuCreator { swipeLeftMenu, swipeRightMenu, position ->
-                val width=20
+                val width=resources.getDimensionPixelSize(R.dimen.dp_70)
                 val height=ViewGroup.LayoutParams.MATCH_PARENT
 
                 val deleteItem= object : SwipeMenuItem(context) {
                 }.setImage(R.drawable.swipedelete)
-                    .setWidth(200)
+                    .setWidth(width)
                     .setHeight(height)
                 swipeRightMenu.addMenuItem(deleteItem)                                              //添加右侧菜单
 
 //                val addItem= object : SwipeMenuItem(context) {
 //                }.setText("add")
 //                    .setTextColor(resources.getColor(R.color.black))
-//                    .setWidth(width)
+//                    .setWidth(200)
 //                    .setHeight(height)
 //                swipeRightMenu.addMenuItem(addItem)                                               //向右侧再添加一个添加菜单
             }
@@ -133,6 +133,7 @@ class FavouriteFragment: Fragment(){
                 ) {
                     super.getItemOffsets(outRect, view, parent, state)
                     outRect.set(3,3,3,3)
+
                 }
             })
         }

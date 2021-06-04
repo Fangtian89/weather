@@ -40,11 +40,10 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d(TAG, "onCreate: "+MyApplication.context.resources.displayMetrics)
-        val bitmap=BitmapFactory.decodeResource(MyApplication.context.resources,R.drawable.sky)
-        Log.d(TAG, "onCreate: ${bitmap.byteCount} ${bitmap.width} ${bitmap.height}")
-
-        Log.d(TAG, "onCreate: ....")
+//        Log.d(TAG, "onCreate: "+MyApplication.context.resources.displayMetrics)
+//        val bitmap=BitmapFactory.decodeResource(MyApplication.context.resources,R.drawable.sky)
+//        Log.d(TAG, "onCreate: ${bitmap.byteCount} ${bitmap.width} ${bitmap.height}")
+//        Log.d(TAG, "onCreate: ....")
 
         //静态加载PlaceFragment
         val intentService = Intent(this, MyService::class.java)

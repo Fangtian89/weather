@@ -1,61 +1,39 @@
 package com.example.sunnyweatherkt.ui.weather
 
-import android.Manifest
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
-import androidx.core.app.JobIntentService
-import androidx.core.content.ContextCompat
-import androidx.core.content.edit
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.ItemTouchHelper
-import com.example.sunnyweatherkt.MyApplication
 import com.example.sunnyweatherkt.R
-import com.example.sunnyweatherkt.Util.MapUtils
 import com.example.sunnyweatherkt.Util.showToastLg
-import com.example.sunnyweatherkt.Util.showToastSt
 import com.example.sunnyweatherkt.Util.startActivity
 import com.example.sunnyweatherkt.logic.Repository
 import com.example.sunnyweatherkt.logic.model.PlaceResponsing
 import com.example.sunnyweatherkt.logic.model.Weather
 import com.example.sunnyweatherkt.logic.model.getSky
 import com.example.sunnyweatherkt.ui.favourite.FavouriteActivity
-import com.example.sunnyweatherkt.ui.favourite.FavouriteFragment
 import com.example.sunnyweatherkt.ui.favourite.FavouriteViewModel
-import com.example.sunnyweatherkt.ui.favourite.MyService
 import com.example.sunnyweatherkt.ui.place.PlaceFragment
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_weather.*
 import kotlinx.android.synthetic.main.forecast.*
-import kotlinx.android.synthetic.main.forecast_item.*
 import kotlinx.android.synthetic.main.life_index.*
 import kotlinx.android.synthetic.main.now.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class WeatherActivity : AppCompatActivity(){
@@ -66,13 +44,21 @@ class WeatherActivity : AppCompatActivity(){
     val TAG="WeatherResult"
     val TAG2="LocationInfo"
     lateinit var mLocationManager:LocationManager
+    lateinit var dialog:AlertDialog
+
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
-        var weatherResult: Weather?=null
 
+
+        setProgressDialog()
+
+
+
+
+        var weatherResult: Weather?=null
         //------------------------------------------------------------------------------------------
         val decorView = window.decorView                                                                              //状态栏和背景融合
         decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -100,7 +86,7 @@ class WeatherActivity : AppCompatActivity(){
         //Log.d(TAG, "onCreate: 2")
         weatherViewModel.weatherLiveData.observe(this, Observer {                               //观察livedata 变化
             result ->
-            weatherResult = result.getOrNull()                                                    //getOrNull 一种防空方法，若为空则给 0
+            weatherResult = result.getOrNull()                                                      //getOrNull 一种防空方法，若为空则给 0
             if (weatherResult != null) {
                 showWeatherInfo(weatherResult!!)
             } else {
@@ -156,7 +142,6 @@ class WeatherActivity : AppCompatActivity(){
             nav_list.visibility=View.GONE
         }else
             nav_list.visibility=View.VISIBLE
-
     }
 
     override fun onRestart() {
@@ -181,6 +166,7 @@ class WeatherActivity : AppCompatActivity(){
 
 
     fun showWeatherInfo(result: Weather) {                                                                //展示weather
+        dialog.dismiss()
         placeName.text = weatherViewModel.placeName
         val realTimeWeather = result.realTime                                                         //取结果，分配
         val dailyWeather = result.dailyResponse                                                       //取结果，分配
@@ -231,6 +217,49 @@ class WeatherActivity : AppCompatActivity(){
         weatherLayout.visibility = View.VISIBLE
     }
 
+
+    fun setProgressDialog() {
+        val llPadding = 30
+        val ll = LinearLayout(this)
+        ll.orientation = LinearLayout.HORIZONTAL
+        ll.setPadding(llPadding, llPadding, llPadding, llPadding)
+        ll.gravity = Gravity.CENTER
+        var llParam = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        llParam.gravity = Gravity.CENTER
+        ll.layoutParams = llParam
+        val progressBar = ProgressBar(this)
+        progressBar.isIndeterminate = true
+        progressBar.setPadding(0, 0, llPadding, 0)
+        progressBar.layoutParams = llParam
+        llParam = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        llParam.gravity = Gravity.CENTER
+        val tvText = TextView(this)
+        tvText.text = "Loading ..."
+        tvText.setTextColor(Color.parseColor("#000000"))
+        tvText.textSize = 20f
+        tvText.layoutParams = llParam
+        ll.addView(progressBar)
+        ll.addView(tvText)
+        val builder = AlertDialog.Builder(this)
+        builder.setCancelable(false)
+        builder.setView(ll)
+        dialog = builder.create()
+        dialog.show()
+        val window = dialog.window
+        if (window != null) {
+            val layoutParams = WindowManager.LayoutParams()
+            layoutParams.copyFrom(dialog.window!!.attributes)
+            layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
+            layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT
+            dialog.window!!.attributes = layoutParams
+        }
+    }
 
 }
 

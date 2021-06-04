@@ -9,24 +9,11 @@
         android:id="@+id/titleLayout"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-
         android:fitsSystemWindows="true">
-
-        <Button
-            android:id="@+id/nav_button"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="10dp"
-            android:layout_gravity="center_vertical"
-            android:textColor="@color/black"
-            android:background="@drawable/ic_baseline_home_24"
-            android:layout_marginLeft="10dp" />
-
-
 
         <TextView
             android:id="@+id/placeName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="60dp"
             android:layout_marginEnd="60dp"
@@ -37,17 +24,37 @@
             android:ellipsize="middle"
             android:text="城市名字"/>
 
-        <Button
-            android:id="@+id/nav_list"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="10dp"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="10dp"
-            android:textColor="@color/black"
-            android:background="@drawable/ic_baseline_list_24"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="20dp" />
+
+        <com.andexert.library.RippleView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end">
+            <Button
+                android:id="@+id/nav_list"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginEnd="10dp"
+                android:textColor="@color/black"
+                android:background="@drawable/ic_baseline_list_24"
+                android:layout_marginRight="10dp" />
+        </com.andexert.library.RippleView>
+
+        <com.andexert.library.RippleView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
+            <Button
+                android:id="@+id/nav_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/ic_baseline_home_24"
+                android:textColor="@color/black" />
+        </com.andexert.library.RippleView>
+
 
     </FrameLayout>
 
@@ -57,7 +64,6 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical">
-
         <TextView
             android:id="@+id/currentTemp"
             android:layout_width="wrap_content"
@@ -109,37 +115,49 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/upateTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:textColor="#000"
-        android:textSize="18sp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="32dp"
-        android:text="Date/Time"/>
+    <RelativeLayout
+        android:id="@+id/li"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <TextView
+            android:id="@+id/upateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:text="Date/Time"
+            android:textColor="#000"
+            android:textSize="18sp" />
 
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="18dp"
-        android:layout_marginRight="18dp"
-        android:layout_marginBottom="18dp"
+        <com.andexert.library.RippleView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true">
 
-        android:src="@drawable/sharp_add_black_48dp"
-        style="?android:attr/borderlessButtonStyle"
-        android:background="@null"
-        android:outlineProvider="none"
-        app:backgroundTint="@android:color/transparent"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:outlineProvider="none"
+                android:src="@drawable/sharp_add_black_48dp"
+                app:backgroundTint="@android:color/transparent"
+                app:borderWidth="0dp" />
+        </com.andexert.library.RippleView>
+    </RelativeLayout>
 
-        app:borderWidth="0dp"
-         />
+
+
+
+
+
+
+
+
+
 <!--    android:tint="@android:color/white"-->
 </RelativeLayout>

@@ -5,8 +5,8 @@
 
     <EditText
         android:id="@+id/edit"
-        android:layout_width="190dp"
-        android:layout_height="40dp"
+        android:layout_width="170dp"
+        android:layout_height="50dp"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
