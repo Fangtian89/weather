@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginLeft="15dp"
-    android:layout_marginRight="15dp"
-    android:layout_marginTop="15dp"
-    android:orientation="vertical"
-    app:cardCornerRadius="4dp">
 
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/favouriteSwipeRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
+
+
+<!--    app:cardCornerRadius="4dp"-->
 <!--    <LinearLayout-->
 <!--       android:id="@+id/favouriteList"-->
 <!--        android:layout_width="match_parent"-->
@@ -17,21 +22,21 @@
 <!--        android:orientation="vertical">-->
 <!--    </LinearLayout>-->
 
-    <TextView
-        android:id="@+id/updateTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp"
-        android:textColor="#000"
-        android:text="date and time"/>
 
-    <com.yanzhenjie.recyclerview.SwipeRecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/updateTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"
+            android:textColor="#000"
+            android:text="date and time"/>
 
-
-</LinearLayout>
+        <com.yanzhenjie.recyclerview.SwipeRecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

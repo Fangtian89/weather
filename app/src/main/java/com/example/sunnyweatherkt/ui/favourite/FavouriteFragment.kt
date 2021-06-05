@@ -1,7 +1,9 @@
 package com.example.sunnyweatherkt.ui.favourite
 
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.Toast
@@ -138,10 +140,13 @@ class FavouriteFragment: Fragment(){
             })
         }
 
-//        recyclerView.setSwipeMenuCreator(swipeMenuCreator)
-//        recyclerView.setOnItemMenuClickListener(mMenuItemClickListener)
 
-
+        favouriteSwipeRefresh.setOnRefreshListener {
+            favouriteSwipeRefresh.isRefreshing=true
+            val intentService = Intent(activity, MyService::class.java)
+            activity?.startService(intentService)
+            favouriteSwipeRefresh.isRefreshing=false
+        }
 
     }
     override fun onActivityCreated(savedInstanceState: Bundle?) {                                   //只起到展示作用

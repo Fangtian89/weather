@@ -51,12 +51,7 @@ class WeatherActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
-
-
         setProgressDialog()
-
-
-
 
         var weatherResult: Weather?=null
         //------------------------------------------------------------------------------------------
@@ -96,7 +91,7 @@ class WeatherActivity : AppCompatActivity(){
             }
             swipeRefresh.isRefreshing = false                                                             //隐藏进度条
         })
-        //weatherViewModel.refreshWeather(weatherViewModel.locationLng,weatherViewModel.locationLat)
+
         swipeRefresh.setColorSchemeResources(R.color.design_default_color_on_secondary)                 //刷新功能
         swipeRefresh.setOnRefreshListener {
             refreshWeather()
@@ -160,13 +155,13 @@ class WeatherActivity : AppCompatActivity(){
 
 
     fun refreshWeather() {
-        weatherViewModel.refreshWeather(weatherViewModel.locationLng, weatherViewModel.locationLat)      //触发变化
+        weatherViewModel.refreshWeather(weatherViewModel.locationLng, weatherViewModel.locationLat)      //触发变化,即刷新
         swipeRefresh.isRefreshing = true                                                                  //显示进度条
     }
 
 
     fun showWeatherInfo(result: Weather) {                                                                //展示weather
-        dialog.dismiss()
+
         placeName.text = weatherViewModel.placeName
         val realTimeWeather = result.realTime                                                         //取结果，分配
         val dailyWeather = result.dailyResponse                                                       //取结果，分配
@@ -215,12 +210,14 @@ class WeatherActivity : AppCompatActivity(){
         ultravioletText.text = lifeIndex.ultraviolet[0].desc
         carWashingText.text = lifeIndex.carWashing[0].desc
         weatherLayout.visibility = View.VISIBLE
+
+        dialog.dismiss()
     }
 
 
     fun setProgressDialog() {
         val llPadding = 30
-        val ll = LinearLayout(this)
+        val ll = LinearLayout(this)                                                             //做一个 linearLayout
         ll.orientation = LinearLayout.HORIZONTAL
         ll.setPadding(llPadding, llPadding, llPadding, llPadding)
         ll.gravity = Gravity.CENTER
@@ -230,26 +227,33 @@ class WeatherActivity : AppCompatActivity(){
         )
         llParam.gravity = Gravity.CENTER
         ll.layoutParams = llParam
-        val progressBar = ProgressBar(this)
-        progressBar.isIndeterminate = true
-        progressBar.setPadding(0, 0, llPadding, 0)
-        progressBar.layoutParams = llParam
+
+        val progressBar = ProgressBar(this).apply {
+                isIndeterminate = true
+                setPadding(0, 0, llPadding, 0)
+                layoutParams = llParam
+        }                                                     //做一个 旋转的 progressBar
+
         llParam = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         llParam.gravity = Gravity.CENTER
-        val tvText = TextView(this)
-        tvText.text = "Loading ..."
-        tvText.setTextColor(Color.parseColor("#000000"))
-        tvText.textSize = 20f
-        tvText.layoutParams = llParam
-        ll.addView(progressBar)
-        ll.addView(tvText)
-        val builder = AlertDialog.Builder(this)
-        builder.setCancelable(false)
-        builder.setView(ll)
-        dialog = builder.create()
+        val tvText = TextView(this).apply {
+                text = "Loading ..."
+                setTextColor(Color.parseColor("#000000"))
+                textSize = 20f
+                layoutParams = llParam
+        }                                                             //做一个 textView
+
+        ll.addView(progressBar)                                                                         //把 progressBar 放到 linearLayout 上
+        ll.addView(tvText)                                                                              //把 textView 放到 linearLayout 上
+        val builder = AlertDialog.Builder(this).apply {
+            setCancelable(false)
+            setView(ll)
+        }                                                 //做一个 AlertDialog 的 builder
+
+        dialog = builder.create()                                                                       //产生 dialog
         dialog.show()
         val window = dialog.window
         if (window != null) {

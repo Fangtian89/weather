@@ -36,6 +36,7 @@ class MyService: IntentService("MyService") {                                   
                 if(placeWeatherList.isEmpty()){
                     stopSelf()
                 }
+
                 var list=ArrayList<PlaceResponsing.Place>()
                 lateinit var weatherResult:Weather
                 Log.d(TAG, "onHandleWork: 1 "+Thread.currentThread().name+" "+placeWeatherList)
