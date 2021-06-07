@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -18,7 +16,9 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sunnyweatherkt.R
+import com.example.sunnyweatherkt.Util.Utility
 import com.example.sunnyweatherkt.Util.showToastLg
 import com.example.sunnyweatherkt.Util.startActivity
 import com.example.sunnyweatherkt.logic.Repository
@@ -31,6 +31,7 @@ import com.example.sunnyweatherkt.ui.place.PlaceFragment
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_weather.*
 import kotlinx.android.synthetic.main.forecast.*
+import kotlinx.android.synthetic.main.hour.*
 import kotlinx.android.synthetic.main.life_index.*
 import kotlinx.android.synthetic.main.now.*
 import java.text.SimpleDateFormat
@@ -47,11 +48,14 @@ class WeatherActivity : AppCompatActivity(){
     lateinit var dialog:AlertDialog
 
 
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
-        setProgressDialog()
+
+
+        Utility.setProgressDialog(this)
 
         var weatherResult: Weather?=null
         //------------------------------------------------------------------------------------------
@@ -84,6 +88,7 @@ class WeatherActivity : AppCompatActivity(){
             weatherResult = result.getOrNull()                                                      //getOrNull 一种防空方法，若为空则给 0
             if (weatherResult != null) {
                 showWeatherInfo(weatherResult!!)
+                Utility.dismissDialog()
             } else {
                 "无法获取天气信息!！".showToastLg()
                 result.exceptionOrNull()?.printStackTrace()
@@ -146,18 +151,12 @@ class WeatherActivity : AppCompatActivity(){
         }
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        if (Repository.readFavouritePlace().isNotEmpty()){
-//            nav_list.visibility=View.GONE
-//        }
-//    }
-
-
     fun refreshWeather() {
         weatherViewModel.refreshWeather(weatherViewModel.locationLng, weatherViewModel.locationLat)      //触发变化,即刷新
         swipeRefresh.isRefreshing = true                                                                  //显示进度条
     }
+
+
 
 
     fun showWeatherInfo(result: Weather) {                                                                //展示weather
@@ -165,12 +164,16 @@ class WeatherActivity : AppCompatActivity(){
         placeName.text = weatherViewModel.placeName
         val realTimeWeather = result.realTime                                                         //取结果，分配
         val dailyWeather = result.dailyResponse                                                       //取结果，分配
+        val hourlyWeather=result.hourlyResponse                                                       //取结果，分配
+
+
+
 //---------------------------------------------realTimeWeather--------------------------------------
-        currentTemp.text = realTimeWeather.temperature.toString() + "°C"
+        val temp=realTimeWeather.temperature
+        currentTemp.text = String.format("%.1f",temp) + "°C"
         currentSky.text = realTimeWeather.skycon
         val pm25 = realTimeWeather.air_quality.aqi.chn.toString()
         currentAQI.text = pm25
-        //Log.d(TAG, "showWeatherInfo: 3 "+Thread.currentThread().name)
         val date = Calendar.getInstance().time
         val formatter = SimpleDateFormat("HH:mm")
         val formatted = formatter.format(date)
@@ -179,6 +182,18 @@ class WeatherActivity : AppCompatActivity(){
         nowLayout.setBackgroundResource(getSky(realTimeWeather.skycon).bg)
 
         //nowLayout.setBackgroundResource(R.mipmap.bg_clear_day)
+
+
+
+//---------------------------------------------hourlyWeather----------------------------------------
+        if(hourlyWeather!=null){
+            val layoutManager=LinearLayoutManager(this)
+            layoutManager.orientation=LinearLayoutManager.HORIZONTAL
+            val hourlyAdapter=HourlyAdapter(hourlyWeather)
+            recyclerView.adapter = hourlyAdapter
+            recyclerView.layoutManager=layoutManager
+        }
+
 //---------------------------------------------dailyWeather-----------------------------------------
 
         forecastLayout.removeAllViews()                                                             //parentview removeall + parentview.addview
@@ -194,7 +209,8 @@ class WeatherActivity : AppCompatActivity(){
             val skyIcon = view.findViewById(R.id.skyIcon) as ImageView
 
             val temperatureInfo = view.findViewById(R.id.temperatureInfo) as TextView
-            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val simpleDateFormat = SimpleDateFormat("y.M.dd H:m ZZZZ", Locale.getDefault())
+
             dateInfo.text = simpleDateFormat.format(skycon.date)
 
             val sky = getSky(skycon.value)                                                           //通过key， 确定 sky 的 value 即 class Sky(val info:String,val icon:Int,val bg:Int)
@@ -210,60 +226,6 @@ class WeatherActivity : AppCompatActivity(){
         ultravioletText.text = lifeIndex.ultraviolet[0].desc
         carWashingText.text = lifeIndex.carWashing[0].desc
         weatherLayout.visibility = View.VISIBLE
-
-        dialog.dismiss()
     }
-
-
-    fun setProgressDialog() {
-        val llPadding = 30
-        val ll = LinearLayout(this)                                                             //做一个 linearLayout
-        ll.orientation = LinearLayout.HORIZONTAL
-        ll.setPadding(llPadding, llPadding, llPadding, llPadding)
-        ll.gravity = Gravity.CENTER
-        var llParam = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        llParam.gravity = Gravity.CENTER
-        ll.layoutParams = llParam
-
-        val progressBar = ProgressBar(this).apply {
-                isIndeterminate = true
-                setPadding(0, 0, llPadding, 0)
-                layoutParams = llParam
-        }                                                     //做一个 旋转的 progressBar
-
-        llParam = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        llParam.gravity = Gravity.CENTER
-        val tvText = TextView(this).apply {
-                text = "Loading ..."
-                setTextColor(Color.parseColor("#000000"))
-                textSize = 20f
-                layoutParams = llParam
-        }                                                             //做一个 textView
-
-        ll.addView(progressBar)                                                                         //把 progressBar 放到 linearLayout 上
-        ll.addView(tvText)                                                                              //把 textView 放到 linearLayout 上
-        val builder = AlertDialog.Builder(this).apply {
-            setCancelable(false)
-            setView(ll)
-        }                                                 //做一个 AlertDialog 的 builder
-
-        dialog = builder.create()                                                                       //产生 dialog
-        dialog.show()
-        val window = dialog.window
-        if (window != null) {
-            val layoutParams = WindowManager.LayoutParams()
-            layoutParams.copyFrom(dialog.window!!.attributes)
-            layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
-            layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT
-            dialog.window!!.attributes = layoutParams
-        }
-    }
-
 }
 

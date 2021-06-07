@@ -40,15 +40,16 @@ object Repository {                                                             
 
    fun  refreshWeather(lng:String,lat:String) = liveData(Dispatchers.IO,2000){
             val result=try {
-                coroutineScope {
+                coroutineScope {                                                                                //打开一个协程
                     val deferredRealtime = async { SunnyWeatherNetwork.getRealTimeWeather(lng, lat) }           //因为async 需要 协程区域 coroutineScope
                     val deferredDaily = async { SunnyWeatherNetwork.getDailyWeather(lng, lat) }
-                    //同时获取结果
-                    val getResultdDaily = deferredDaily.await()
-                    val getResultRealtime = deferredRealtime.await()
+                    val deferredHourly=async { SunnyWeatherNetwork.getHourlyWeather(lng,lat) }
 
-                    if (getResultdDaily.status .equals("ok") && getResultRealtime.status .equals("ok")) {
-                        val weatherResult = Weather(getResultRealtime.result.realtime, getResultdDaily.result.daily)        //把2个结果都放在 weather,作为一个结果
+                    val getResultdDaily = deferredDaily.await()                                                 //同时获取结果
+                    val getResultRealtime = deferredRealtime.await()
+                    val getResultHourly= deferredHourly.await()
+                    if (getResultdDaily.status .equals("ok") && getResultRealtime.status .equals("ok")&& getResultHourly.status.equals("ok")) {
+                        val weatherResult = Weather(getResultRealtime.result.realtime, getResultdDaily.result.daily,getResultHourly.result.hourly)        //把2个结果都放在 weather,作为一个结果
                         Result.success(weatherResult)                                                       //if 最后一行表示返回
                     } else {
                         Result.failure(RuntimeException("realtime response status is ${getResultRealtime.status} " +     //else 最后一行表示返回
@@ -62,30 +63,30 @@ object Repository {                                                             
     }
 
 
-    fun favouriteWeatherRefresh(lng:String,lat:String)= liveData(Dispatchers.IO,2000) {
-        val result=try {
-            coroutineScope {
-                val deferredRealtime = async { SunnyWeatherNetwork.getRealTimeWeather(lng, lat) }           //因为async 需要 协程区域 coroutineScope
-                val deferredDaily = async { SunnyWeatherNetwork.getDailyWeather(lng, lat) }
-                //同时获取结果
-                val getResultdDaily = deferredDaily.await()
-                val getResultRealtime = deferredRealtime.await()
-
-                if (getResultdDaily.status .equals("ok") && getResultRealtime.status .equals("ok")) {
-                    val weatherResult = Weather(getResultRealtime.result.realtime, getResultdDaily.result.daily)        //把2个结果都放在 weather,作为一个结果
-                    Log.d("WeatherResult", "favouriteWeatherRefresh: in Takt")
-                    Result.success(weatherResult)
-                //if 最后一行表示返回
-                } else {
-                    Result.failure(RuntimeException("realtime response status is ${getResultRealtime.status} " +     //else 最后一行表示返回
-                            "daily response status is ${getResultdDaily.status}!!"))
-                }
-            }
-        }catch (e:Exception){
-            Result.failure<Weather>(e)
-        }
-        emit(result)
-    }
+//    fun favouriteWeatherRefresh(lng:String,lat:String)= liveData(Dispatchers.IO,2000) {
+//        val result=try {
+//            coroutineScope {
+//                val deferredRealtime = async { SunnyWeatherNetwork.getRealTimeWeather(lng, lat) }           //因为async 需要 协程区域 coroutineScope
+//                val deferredDaily = async { SunnyWeatherNetwork.getDailyWeather(lng, lat) }
+//                //同时获取结果
+//                val getResultdDaily = deferredDaily.await()
+//                val getResultRealtime = deferredRealtime.await()
+//
+//                if (getResultdDaily.status .equals("ok") && getResultRealtime.status .equals("ok")) {
+//                    val weatherResult = Weather(getResultRealtime.result.realtime, getResultdDaily.result.daily)        //把2个结果都放在 weather,作为一个结果
+//                    Log.d("WeatherResult", "favouriteWeatherRefresh: in Takt")
+//                    Result.success(weatherResult)
+//                //if 最后一行表示返回
+//                } else {
+//                    Result.failure(RuntimeException("realtime response status is ${getResultRealtime.status} " +     //else 最后一行表示返回
+//                            "daily response status is ${getResultdDaily.status}!!"))
+//                }
+//            }
+//        }catch (e:Exception){
+//            Result.failure<Weather>(e)
+//        }
+//        emit(result)
+//    }
 
 //    private fun<T> fire(context:CoroutineContext,block:suspend()->Result<T>):LiveData<Result<T>>{
 //        return liveData(context) {

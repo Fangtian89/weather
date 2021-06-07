@@ -49,12 +49,14 @@ class MyService: IntentService("MyService") {                                   
                     Log.d(TAG, "onHandleWork: 2 "+it.name+" "+Thread.currentThread().name)
                     val deferredRealtime = async{SunnyWeatherNetwork.getRealTimeWeather(it.location.lng,it.location.lat)}           //因为async 需要 协程区域 coroutineScope, async 会阻塞协程，知道得到结果
                     val deferredDaily = async { SunnyWeatherNetwork.getDailyWeather(it.location.lng,it.location.lat) }
+                    val deferredHourly=async { SunnyWeatherNetwork.getHourlyWeather(it.location.lng,it.location.lat) }
                     //同时获取结果
                     val getResultdDaily = deferredDaily.await()
                     val getResultRealtime = deferredRealtime.await()
+                    val getResultHourly=deferredHourly.await()
                     Log.d(TAG, "onHandleWork: 3 "+Thread.currentThread().name)
                     if (getResultdDaily.status .equals("ok") && getResultRealtime.status .equals("ok")) {
-                        weatherResult = Weather(getResultRealtime.result.realtime, getResultdDaily.result.daily)        //把2个结果都放在 weather,作为一个结果
+                        weatherResult = Weather(getResultRealtime.result.realtime, getResultdDaily.result.daily,getResultHourly.result.hourly)        //把2个结果都放在 weather,作为一个结果
                         Log.d(TAG, "onHandleWork: 4 "+Thread.currentThread().name)
                         //if 最后一行表示返回
                     } else {

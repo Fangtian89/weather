@@ -11,10 +11,12 @@ data class DailyResponse(val status:String,val result:Result){
     data class Description(val desc:String)
 }
 
-/*{"status":"ok","api_version":"v2.5","api_status":"active","lang":"zh_CN","unit":"metric","tzshift":28800,"timezone":"Asia\/Taipei",
+/*
+{"status":"ok","api_version":"v2.5","api_status":"active","lang":"zh_CN","unit":"metric","tzshift":28800,"timezone":"Asia\/Taipei",
 "server_time":1617474889,"location":[25.1552,121.6544],
 
-"result":{"daily":{"status":"ok","astro":[{"date":"2021-04-04T00:00+08:00","sunrise":{"time":"05:41"},
+"result":{"daily":
+    {"status":"ok","astro":[{"date":"2021-04-04T00:00+08:00","sunrise":{"time":"05:41"},
 "sunset":{"time":"18:11"}},{"date":"2021-04-05T00:00+08:00","sunrise":{"time":"05:40"},"sunset":{"time":"18:11"}},{"date":"2021-04-06T00:00+08:00",
 "sunrise":{"time":"05:39"},"sunset":{"time":"18:11"}},{"date":"2021-04-07T00:00+08:00","sunrise":{"time":"05:38"},"sunset":{"time":"18:12"}},
 {"date":"2021-04-08T00:00+08:00","sunrise":{"time":"05:37"},"sunset":{"time":"18:12"}}],
@@ -113,4 +115,7 @@ data class DailyResponse(val status:String,val result:Result){
 {"date":"2021-04-06T00:00+08:00","index":"3","desc":"\u6613\u53d1"},
 {"date":"2021-04-07T00:00+08:00","index":"3","desc":"\u6613\u53d1"},
 {"date":"2021-04-08T00:00+08:00","index":"3","desc":"\u6613\u53d1"}]}},"primary":0}}
+
  */
+
+

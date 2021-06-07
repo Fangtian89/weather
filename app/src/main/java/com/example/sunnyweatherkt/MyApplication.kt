@@ -7,7 +7,7 @@ import android.widget.Toast
 
 class MyApplication: Application() {
     @SuppressLint("StaticFieldLeak")
-    companion object{
+    companion object{                                                                               //静态模块
         lateinit var context: Context
         const val TOKEN="ggepE823AvATQ6dj"
     }

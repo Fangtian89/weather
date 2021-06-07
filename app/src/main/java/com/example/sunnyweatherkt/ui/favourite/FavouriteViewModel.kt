@@ -15,21 +15,21 @@ class FavouriteViewModel:ViewModel() {
 
 
 
-    val favouriteWeatherLiveData=Transformations.switchMap(locationLiveData){location->
-        Repository.favouriteWeatherRefresh(location.lng,location.lat)
-    }
-
-
-     fun  refreshFavouriteWeather(lng:String,lat:String){
-         locationLiveData.postValue(PlaceResponsing.Location(lng,lat))
-         Log.d(TAG, "refreshFavouriteWeather")
-     }
-
-
-    fun saveFavouritePlace(place:PlaceResponsing.Place,weather:Weather){
-        Log.d(TAG, "saved")
-        Repository.saveFavouritePlace(place,weather)
-    }
+//    val favouriteWeatherLiveData=Transformations.switchMap(locationLiveData){location->
+//        Repository.favouriteWeatherRefresh(location.lng,location.lat)
+//    }
+//
+//
+//     fun  refreshFavouriteWeather(lng:String,lat:String){
+//         locationLiveData.postValue(PlaceResponsing.Location(lng,lat))
+//         Log.d(TAG, "refreshFavouriteWeather")
+//     }
+//
+//
+//    fun saveFavouritePlace(place:PlaceResponsing.Place,weather:Weather){
+//        Log.d(TAG, "saved")
+//        Repository.saveFavouritePlace(place,weather)
+//    }
 
     fun readFavouritePlace()=Repository.readFavouritePlace()
 

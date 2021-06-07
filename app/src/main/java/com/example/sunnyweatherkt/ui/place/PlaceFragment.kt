@@ -132,7 +132,6 @@ class PlaceFragment:Fragment() {
 
 
         navigationLocation.setOnClickListener {
-
             if (ContextCompat.checkSelfPermission(                                                  //请求地理权限
                     MyApplication.context,
                     Manifest.permission.ACCESS_FINE_LOCATION

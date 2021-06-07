@@ -19,6 +19,7 @@ object SunnyWeatherNetwork {                                                    
     suspend fun searchPlaces(query: String) = placeService.searchPlaces(query).await()                //placeService.searchPlaces(query),访问接口， placeSerive.searchPlaces(query) 返回Call<PlaceResponsing.PlaceResponse>, 因此可以 调用await
     suspend fun getRealTimeWeather(lng:String,lat:String)= weatherService.getRealTimeWeather(lng,lat).await()
     suspend fun getDailyWeather(lng: String,lat: String)= weatherService.getDailyWeather(lng,lat).await()
+    suspend fun getHourlyWeather(lng:String,lat:String)=weatherService.getHourlyWeather(lng,lat).await()
 
 //suspend fun searchPlaces(query:String):PlaceResponse.PlaceResponse{
 //    return placeService.searchPlaces(query).await()

@@ -30,6 +30,7 @@
                 android:orientation="vertical">
 
                 <include layout="@layout/now"/>
+                <include layout="@layout/hour"/>
                 <include layout="@layout/forecast"/>
                 <include layout="@layout/life_index"/>
             </LinearLayout>
