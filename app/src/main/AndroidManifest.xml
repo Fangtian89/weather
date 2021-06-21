@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -13,21 +16,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SunnyWeatherKT">
-        <activity android:name=".ui.favourite.FavouriteActivity"></activity>
+        <activity android:name=".ui.favourite.FavouriteActivity"/>
         <activity android:name=".ui.weather.WeatherActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service android:name=".ui.favourite.MyService"
             android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-           ></service>
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+        <receiver android:name=".com.example.sunnyweatherkt.UpdateBroadCastService"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.example.SunnyWeatherKT.updateBroadcastReceiver"/>
+            </intent-filter>
+        </receiver>
+
+
+
     </application>
-
-
-
 </manifest>

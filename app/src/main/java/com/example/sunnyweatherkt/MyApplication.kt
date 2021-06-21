@@ -14,6 +14,10 @@ class MyApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
+
         context =applicationContext
+    }
+    fun getValue( value:String):String{
+        return value
     }
 }

@@ -2,7 +2,7 @@ package com.example.sunnyweatherkt.logic.network
 
 import android.util.Log
 import com.example.sunnyweatherkt.logic.model.Weather
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,14 +44,14 @@ object SunnyWeatherNetwork {                                                    
 
     private suspend fun <T> Call<T>.await(): T {                                                    //写了个 await 的扩展函数， Call 的对象可以访问他,并且里面有 Call 的对象语境，可以调用 enqueue
         Log.d(TAG, "await: before" +
-                " suspendCoroutine"+Thread.currentThread().name)                                   //子线程
-        return suspendCoroutine { continuation ->
-            Log.d(TAG, "await: in suspendCoroutine"+Thread.currentThread().name)                               //子线程
+                " suspendCoroutine"+Thread.currentThread().name)                                    //在子线程，因为call 他的函数在子线程
+        return suspendCoroutine { continuation ->                                                   //简化回调
+            Log.d(TAG, "await: in suspendCoroutine"+Thread.currentThread().name)               //子线程，在子线程，因为call 他的函数在子线程
             enqueue(object : Callback<T> {                                                          //匿名内部类 object: Callback<T>,写回调的方法， onResponse, onFailure
                 override fun onResponse(call: Call<T>, response: Response<T>) {
-                    val body = response.body()
-                    Log.d(TAG, "onResponse: in callback"+Thread.currentThread().name)                  //主线程
-                    if (body != null) continuation.resume(body)                                     //恢复线程 , 返回body 值
+                    val body = response.body()                                                      //回归主线程
+                    Log.d(TAG, "await in callback "+Thread.currentThread().name)
+                    if (body != null) continuation.resume(body)                                     //返回body 值
                     else continuation.resumeWithException(
                             RuntimeException("response body is null")
                     )
@@ -60,14 +60,10 @@ object SunnyWeatherNetwork {                                                    
                 override fun onFailure(call: Call<T>, t: Throwable) {
                     continuation.resumeWithException(t)
                 }
-
-
             }
             )
         }
     }
-
-
 }
 
 

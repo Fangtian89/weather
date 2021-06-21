@@ -18,5 +18,4 @@ interface WeatherService {
     fun getDailyWeather(@Path("lng") lng:String, @Path("lat") lat:String): Call<DailyResponse>
     @GET("/v2.5/${com.example.sunnyweatherkt.MyApplication.TOKEN}/{lng},{lat}/hourly.json?lang=en")
     fun getHourlyWeather(@Path("lng") lng:String, @Path("lat") lat:String): Call<HourlyResponse>
-
 }

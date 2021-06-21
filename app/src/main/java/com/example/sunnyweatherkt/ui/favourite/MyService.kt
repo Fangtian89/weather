@@ -20,7 +20,7 @@ import java.lang.RuntimeException
 import kotlin.coroutines.suspendCoroutine
 
 class MyService: IntentService("MyService") {                                                //以后台service的功能更新及保存喜爱的地方
-    val TAG="WeatherResult"
+    val TAG="MyService"
 
     override fun onCreate() {
         super.onCreate()
@@ -39,9 +39,8 @@ class MyService: IntentService("MyService") {                                   
 
                 var list=ArrayList<PlaceResponsing.Place>()
                 lateinit var weatherResult:Weather
-                Log.d(TAG, "onHandleWork: 1 "+Thread.currentThread().name+" "+placeWeatherList)
+                Log.d(TAG, "onHandleWork: 1 "+Thread.currentThread().name)
                 placeWeatherList.forEach { (t, u) ->
-                    Log.d(TAG, "onHandleIntent: hallo world")
                     list.add(Gson().fromJson(t, PlaceResponsing.Place::class.java))                          //取出地址，放到Arraylist 中,  造一个新的list, key是城市名字,value是PlaceResponsing.Place
                 }
 

@@ -14,7 +14,7 @@ import java.util.*
 
 
 class HourlyAdapter(val hourlyWeather:HourlyResponse.Hourly):RecyclerView.Adapter<HourlyAdapter.Holder>() {
-    private val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    private val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.CHINA)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.houritem,parent,false)
         val holder=Holder(view)
@@ -30,7 +30,6 @@ class HourlyAdapter(val hourlyWeather:HourlyResponse.Hourly):RecyclerView.Adapte
             holder.possibility.text=""
             val sky= getSky(hourlyWeather.skycon[position].value)
             holder.imageView.setImageResource(sky.icon)
-
         }
 
 

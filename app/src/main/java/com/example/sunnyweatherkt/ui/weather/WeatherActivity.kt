@@ -1,10 +1,12 @@
 package com.example.sunnyweatherkt.ui.weather
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
@@ -17,6 +19,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.sunnyweatherkt.MyApplication
 import com.example.sunnyweatherkt.R
 import com.example.sunnyweatherkt.Util.Utility
 import com.example.sunnyweatherkt.Util.showToastLg
@@ -48,12 +51,13 @@ class WeatherActivity : AppCompatActivity(){
     lateinit var dialog:AlertDialog
 
 
-
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+    }
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
-
 
         Utility.setProgressDialog(this)
 
@@ -167,7 +171,6 @@ class WeatherActivity : AppCompatActivity(){
         val hourlyWeather=result.hourlyResponse                                                       //取结果，分配
 
 
-
 //---------------------------------------------realTimeWeather--------------------------------------
         val temp=realTimeWeather.temperature
         currentTemp.text = String.format("%.1f",temp) + "°C"
@@ -213,6 +216,8 @@ class WeatherActivity : AppCompatActivity(){
 
             dateInfo.text = simpleDateFormat.format(skycon.date)
 
+
+
             val sky = getSky(skycon.value)                                                           //通过key， 确定 sky 的 value 即 class Sky(val info:String,val icon:Int,val bg:Int)
             skyIcon.setImageResource(sky.icon)
             skyInfo.text = sky.info
@@ -227,5 +232,7 @@ class WeatherActivity : AppCompatActivity(){
         carWashingText.text = lifeIndex.carWashing[0].desc
         weatherLayout.visibility = View.VISIBLE
     }
+
+
 }
 
