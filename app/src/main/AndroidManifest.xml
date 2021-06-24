@@ -36,8 +36,5 @@
                 <action android:name="com.example.SunnyWeatherKT.updateBroadcastReceiver"/>
             </intent-filter>
         </receiver>
-
-
-
     </application>
 </manifest>

@@ -22,7 +22,7 @@ class PlaceViewModel : ViewModel() {
         searchLiveData.value=query
     }
 
-    fun savedPlace(place:PlaceResponsing.Place){Repository.savePlace(place)}
+    fun isSavedPlace():Boolean=Repository.isPlaceSaved()
     fun getSavedPlace()=Repository.getSavedPlace()
-    fun isSavedPlace()=Repository.isPlaceSaved()
+    fun savedPlace(place:PlaceResponsing.Place){Repository.savePlace(place)}
 }

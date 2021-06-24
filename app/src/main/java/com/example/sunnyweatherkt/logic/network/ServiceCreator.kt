@@ -24,7 +24,6 @@ object ServiceCreator {                                                         
 //
     inline fun<reified T> create():T= create(T::class.java)                                         //T::class.java 意思是 T 型的Class 类对象
 
-
 //    inline fun<reified T> create():T{
 //        return create(T::class.java)
     }

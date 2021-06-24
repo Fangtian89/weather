@@ -12,14 +12,15 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 object SunnyWeatherNetwork {                                                                        //构建一个 统一网络数据源访问入口
-    val placeService = ServiceCreator.create<PlaceService>()                                        //访问Retrofit构建器，返回retrofit 的构建接口(PlaceService)的动态管理对象，对象就可以访问自己的方法 searchPlaces
-    val weatherService= ServiceCreator.create<WeatherService>()
-    val TAG="WeatherResult"
+    private val placeService = ServiceCreator.create<PlaceService>()                                        //访问Retrofit构建器，返回retrofit 的构建接口(PlaceService)的动态管理对象，对象就可以访问自己的方法 searchPlaces
+    private val weatherService= ServiceCreator.create<WeatherService>()
+    const val TAG="WeatherResult"
 
     suspend fun searchPlaces(query: String) = placeService.searchPlaces(query).await()                //placeService.searchPlaces(query),访问接口， placeSerive.searchPlaces(query) 返回Call<PlaceResponsing.PlaceResponse>, 因此可以 调用await
     suspend fun getRealTimeWeather(lng:String,lat:String)= weatherService.getRealTimeWeather(lng,lat).await()
     suspend fun getDailyWeather(lng: String,lat: String)= weatherService.getDailyWeather(lng,lat).await()
     suspend fun getHourlyWeather(lng:String,lat:String)=weatherService.getHourlyWeather(lng,lat).await()
+
 
 //suspend fun searchPlaces(query:String):PlaceResponse.PlaceResponse{
 //    return placeService.searchPlaces(query).await()

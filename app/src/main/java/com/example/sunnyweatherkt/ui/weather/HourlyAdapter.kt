@@ -23,16 +23,14 @@ class HourlyAdapter(val hourlyWeather:HourlyResponse.Hourly):RecyclerView.Adapte
 
     override fun onBindViewHolder(holder: HourlyAdapter.Holder, position: Int) {
 
-        if(hourlyWeather.temperature.size==hourlyWeather.skycon.size){
-            val temp=hourlyWeather.temperature[position].value
-            holder.temperature.text=String.format("%.1f",temp)+"°C"
-            holder.hour.text=simpleDateFormat.format(hourlyWeather.skycon[position].datetime)
-            holder.possibility.text=""
-            val sky= getSky(hourlyWeather.skycon[position].value)
+        if(hourlyWeather.temperature.size==hourlyWeather.skycon.size) {
+            val temp = hourlyWeather.temperature[position].value
+            holder.temperature.text = String.format("%.1f", temp) + "°C"
+            holder.hour.text = simpleDateFormat.format(hourlyWeather.skycon[position].datetime)
+            holder.possibility.text = ""
+            val sky = getSky(hourlyWeather.skycon[position].value)
             holder.imageView.setImageResource(sky.icon)
         }
-
-
     }
 
     override fun getItemCount()=hourlyWeather.skycon.size
@@ -42,6 +40,5 @@ class HourlyAdapter(val hourlyWeather:HourlyResponse.Hourly):RecyclerView.Adapte
         val imageView:ImageView=view.findViewById(R.id.skyIconi)
         val possibility:TextView=view.findViewById(R.id.possibility)
         val temperature=view.findViewById(R.id.temperature) as TextView
-
     }
 }

@@ -10,6 +10,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +22,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Data
 import com.example.sunnyweatherkt.MainActivity
 import com.example.sunnyweatherkt.MyApplication
 import com.example.sunnyweatherkt.R
@@ -84,7 +87,6 @@ class PlaceFragment:Fragment() {
             activity?.finish()                                                                      //关掉之前activity 或 fragment
             return                                                                                  //从数据库获得的数据，展示后直接退出，适用于不是第一次使用
         }
-
 
         //------------------------------------------------------------------------------------------
 
@@ -207,5 +209,4 @@ class PlaceFragment:Fragment() {
 //        super.onStop()
 //        mLocationManager.removeUpdates(mLocationListener)
 //    }
-
 }

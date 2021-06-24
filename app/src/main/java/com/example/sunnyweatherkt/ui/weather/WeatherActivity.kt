@@ -2,6 +2,7 @@ package com.example.sunnyweatherkt.ui.weather
 
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.Color
 import android.location.LocationManager
 import android.os.Build
@@ -18,6 +19,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sunnyweatherkt.MyApplication
 import com.example.sunnyweatherkt.R
@@ -86,7 +88,6 @@ class WeatherActivity : AppCompatActivity(){
 
 
         weatherViewModel.refreshWeather(weatherViewModel.locationLng, weatherViewModel.locationLat)      //触发viewModel内部变化
-        //Log.d(TAG, "onCreate: 2")
         weatherViewModel.weatherLiveData.observe(this, Observer {                               //观察livedata 变化
             result ->
             weatherResult = result.getOrNull()                                                      //getOrNull 一种防空方法，若为空则给 0
@@ -105,7 +106,6 @@ class WeatherActivity : AppCompatActivity(){
         swipeRefresh.setOnRefreshListener {
             refreshWeather()
         }
-
 
 
         drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {                           //drawerLayout 监听器 ,新知识!!!
